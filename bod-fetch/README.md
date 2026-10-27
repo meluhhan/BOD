@@ -1,0 +1,98 @@
+# bodfetch
+
+Fetches the daily BOD exchange/contract files into `downloads/<BOD date>/` (inside this folder).
+It never touches UAT. Pushing to .76 is a separate, later step.
+
+## Setup (Mac, once)
+
+```bash
+cd bod-fetch
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium        # the login browser
+```
+
+`holidays.txt` fills itself from NSE's public holiday list (once per year, on the first run that needs it).
+Add extra closures by hand as `YYYY-MM-DD  # reason # manual`.
+
+## Which files need a login
+
+| Source | Files | Login |
+|---|---|---|
+| BSE public site + NSE public archive | 37 of the 62 sheet rows, plus `qty_freeze` | none |
+| NSE member extranet | 15 (`nse_member`, 2 `slbm`) | human: CAPTCHA/OTP |
+| BSE member portal | 2 (`EQD_CC_CO`, `EQ_MAP_CC`) | human |
+| MCX member file server (Serv-U, sftp.mcxindia.com) | 7 (`mcx`) | automatic, ID/password from `.env` |
+| MCXCCL daily margin page (refuses scripts) | 1 (`DailyMargin_*`) | open question |
+
+## Daily use
+
+```bash
+source .venv/bin/activate
+python bodfetch.py plan --only sheet            # what will be fetched, with today's dates
+
+# 1. public files, no login
+python bodfetch.py fetch --only bse_open,nse_public,slbm
+
+# 2. login files
+python bodfetch.py browser                      # opens a Chromium window; log in to each portal tab
+python bodfetch.py fetch --only sheet           # uses that logged-in window; leave it open
+```
+
+The `browser` window keeps running after the command returns. Every `fetch` attaches to it, so you
+log in once and can re-run `fetch` (or `fetch --watch --interval 20 --until 07:00`) as files publish.
+Close the window when done. It listens on 127.0.0.1:9222 only, and its profile (`browser-profile/`)
+holds your session cookies: never copy or commit it.
+
+Alternative without a separate window: `fetch --login` opens a browser inside that run and waits
+for Enter after you log in.
+
+## Auto-login (MCX: ID + password, no CAPTCHA/OTP)
+
+```bash
+cp .env.example .env && chmod 600 .env     # then fill MCX_USER, MCX_PASSWORD
+python bodfetch.py login mcx               # optional: just test the login
+python bodfetch.py fetch --only mcx        # starts the browser and logs in by itself if needed
+```
+
+`.env` is git-ignored; values are never printed. If a CAPTCHA shows up, the script stops after
+filling ID/password and you finish by hand. A screenshot of the result goes to
+`browser-profile/last_login_mcx.png`.
+
+## One-time: record the download URLs for the login files
+
+The sheet lists NSE folders (`/CMCOMMON/ntneat` ...), not download URLs. With the `browser`
+window open and logged in:
+
+```bash
+python bodfetch.py record          # press Enter (or Ctrl+C) when done
+```
+
+In the window, download ONE file from each folder by hand: NSE `CMCOMMON/ntneat`, `CMCOMMON/tbtmaster`,
+`CDSCOMMON`, `CDSCOMMON/tbtmaster`, `FAOCOMMON`, `FAOCOMMON/Bhavcopy`, `FAOCOMMON/Limit Files`,
+`FAOCOMMON/tbtmaster`, `SLBCOMMON/NTNEAT`; the BSE member CC files; MCX. `recorded_urls.json` then
+holds every request (header names only, no cookie values). Put each download URL into `manifest.yaml`
+as `url:` on its row, with `{T:...}` / `{P:...}` date tokens. Also set `session.login_urls` and
+`session.probe_url`.
+
+## File dates
+
+T = BOD date, P = previous trading day. BSE and NSE name contract, participant and scrip masters after
+the evening they are generated (P), but the content is for T. Checked 27-Oct-2026:
+`BSE_EQD_CONTRACT_26102026` and `NSE_FO_contract_26102026` hold contracts starting 27-Oct. Those rows
+fetch exactly the P-named file and save it under the T name UAT uses (`member:` / P-dated `url`).
+They take exactly P, never "T or P": in the evening the T-named file already exists and is for the NEXT day.
+
+## Statuses
+
+| Status | Meaning |
+|---|---|
+| OK / CACHED | file fetched and valid / already fetched earlier |
+| OPTIONAL_ABSENT | optional file not published (e.g. `fo_secban.csv`) |
+| NOT_PUBLISHED | not there yet (404, HTML page, or stale zip) - retried by `--watch` |
+| NEEDS_LOGIN | no logged-in browser, or the session expired |
+| NEEDS_URL | row has no URL yet: use `record` |
+| MANUAL | no known source (`qty_freeze`, `Settlor.txt`; not in the sheet) |
+| FAILED | download or validation error: see the detail column |
+
+Exit code is 0 only when every selected file is OK / CACHED / OPTIONAL_ABSENT.

@@ -1,0 +1,25 @@
+# --- never commit: source documents (internal; the production checklist contains passwords)
+*.pdf
+*.docx
+*.xlsx
+
+# --- secrets and sessions
+.env
+.env.*
+!.env.example
+browser-profile/
+recorded_urls.json
+
+# --- generated data
+downloads/
+staging/
+*.part
+
+# --- Python / OS / editors
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/

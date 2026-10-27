@@ -1,0 +1,3 @@
+requests
+pyyaml
+playwright   # only needed for NSE / session files: then run `playwright install chromium`

@@ -1,0 +1,136 @@
+# manifest.yaml - one row per file. Seeded from "Servers List with Configuration - BOD_Files GreekSoft".
+#
+# Date tokens in name/url/member:  {T:%d%m%Y} = BOD date, {P:%Y%m%d} = previous trading day,
+#   {D:...} = the candidate date being tried (url_dates for the url, member_dates for name/member).
+#
+# type:
+#   http     direct file URL (no login)
+#   zip      download a zip, pull the dated member out of it (stale zips are rejected)
+#            member: name inside the zip when it differs from the name we save under.
+#            member_dates: [T, P] -> try the member dated T, then P (saved under the name for that date).
+# BSE and NSE name contract/participant/scrip masters after the EVENING they are made (P) although the
+# content is for T (checked 27-Oct-2026: BSE_EQD_CONTRACT_26102026 holds contracts starting 27-Oct).
+# Those rows take exactly the P-named file and save it under the T name UAT uses. Exactly P, never
+# "T or P": an evening run would otherwise grab tonight's file, which is for the NEXT day.
+#   session  needs the human-logged-in browser; `url` is blank until you record it (bodfetch.py record)
+#   servu    file on a Serv-U portal (MCX): `portal`, `dir`; name may contain * ; auto-login from .env
+#            min_modified: T -> for undated names, only a copy modified on/after the BOD date
+#   manual   source not known yet (reported, never silently skipped)
+# optional: true   -> a 404 is fine (e.g. fo_secban.csv, sheet says "Not Found")
+# grp is only for `--only` filtering.
+
+settings:
+  staging_dir: downloads        # relative to this file -> bod-fetch/downloads/<YYYY-MM-DD>/
+  holidays_file: holidays.txt
+  cutoff: "15:30"            # runs after this time target the NEXT trading day
+  session:
+    login_urls:                             # one tab each; the human logs in to all of them
+      - "https://www.nseindia.com"          # TODO: the NSE member/extranet login page you use
+      - "https://member.bseindia.com/"      # BSE member portal (rows 31, 34)
+      # - "<MCX member portal login>"       # TODO: for the mcx rows
+    probe_url: ""                           # TODO: any URL that only works when logged in (detects expiry)
+    login_marker: "login"                   # if the probe lands on a URL containing this, we are logged out
+    profile_dir: browser-profile          # login browser's cookies live here (git-ignored, never share it)
+    cdp_port: 9222                        # `bodfetch.py browser` listens here (127.0.0.1 only); fetch/record attach
+    use_saved_profile: false                # true = try cookies saved in the profile without --login
+    portals:                                # `bodfetch.py login <name>`: auto-login, values come from .env
+      mcx:                                  # firm says: ID + password only, no CAPTCHA/OTP
+        # Serv-U web client of MCX's member file server. The /Web Client/Mobile/MLogin.html page is
+        # rejected by MCX's firewall; the root page works.
+        login_url: "https://sftp.mcxindia.com/"
+        user_env: MCX_USER                  # ID and password come from .env
+        pass_env: MCX_PASSWORD
+        user_selector: "#user-box-text"
+        pass_selector: "#pword-box-text"
+        submit_selector: "#btn-LoginButton"
+        after_login_click: "#btn-WelcomeDialogOkButton"
+
+files:
+  # ---------------- BSE, open URLs (20 files from 9 requests) ----------------
+  - {id: 7,  grp: bse_open, type: http, name: "BhavCopy_BSE_CD_0_0_0_{P:%Y%m%d}_F_0000.CSV", url: "https://www.bseindia.com/bsedata/CIML_bhavcopy/BhavCopy_BSE_CD_0_0_0_{P:%Y%m%d}_F_0000.CSV"}
+  - {id: 8,  grp: bse_open, type: http, name: "BhavCopy_BSE_CM_0_0_0_{P:%Y%m%d}_F_0000.CSV", url: "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_{P:%Y%m%d}_F_0000.CSV"}
+  - {id: 9,  grp: bse_open, type: http, name: "BhavCopy_BSE_FO_0_0_0_{P:%Y%m%d}_F_0000.CSV", url: "https://www.bseindia.com/download/Bhavcopy/Derivative/BhavCopy_BSE_FO_0_0_0_{P:%Y%m%d}_F_0000.CSV"}
+  # VAR: sheet says "use the previous date for VAR". We try the zip dated T, then P, but only accept
+  # a zip that contains the member named for T (safe against stale files). Verify on the first run.
+  - {id: 62, grp: bse_open, type: zip,  name: "VAR{T:%d%m%y}.xls", url: "https://www.bseindia.com/BSEDATA/margins/VAR{D:%d%m%y}.zip", url_dates: [T, P]}
+  - {id: 16, grp: bse_open, type: zip,  name: "BSECDXRISK{T:%Y%m%d}-00.spn", url: "https://www.bseindia.com/bsedata/Risk_Automate/CURRENCY/SPN/BSECDXRISK{T:%Y%m%d}-00.ZIP"}
+  - {id: 20, grp: bse_open, type: zip,  name: "BSERISK{T:%Y%m%d}-00.spn", url: "https://www.bseindia.com/bsedata/Risk_Automate/SPN/BSERISK{T:%Y%m%d}-00.ZIP"}
+  # CO.zip
+  - {id: 17, grp: bse_open, type: zip, name: "BSE_EQD_CONTRACT_{T:%d%m%Y}.csv", member: "BSE_EQD_CONTRACT_{P:%d%m%Y}.csv",    url: &co_zip "https://www.bseindia.com/downloads/Help/file/CO.zip"}
+  - {id: 18, grp: bse_open, type: zip, name: "BSE_EQD_SPDCONTRACT_{T:%d%m%Y}.csv", member: "BSE_EQD_SPDCONTRACT_{P:%d%m%Y}.csv", url: *co_zip}
+  - {id: 32, grp: bse_open, type: zip, name: "EQD_DP{T:%d%m%y}", member: "EQD_DP{P:%d%m%y}",                    url: *co_zip}
+  # scrip.zip
+  - {id: 19, grp: bse_open, type: zip, name: "BSE_EQ_SCRIP_{T:%d%m%Y}.csv", member: "BSE_EQ_SCRIP_{P:%d%m%Y}.csv", url: &scrip_zip "https://www.bseindia.com/downloads/Help/file/scrip.zip"}
+  - {id: 24, grp: bse_open, type: zip, name: "CI{T:%d%m%y}.txt", member: "CI{P:%d%m%y}.txt",             url: *scrip_zip}
+  - {id: 30, grp: bse_open, type: zip, name: "DP{T:%d%m%y}",                 url: *scrip_zip}
+  - {id: 59, grp: bse_open, type: zip, name: "REG_IND{T:%d%m%y}.csv", member: "REG_IND{P:%d%m%y}.csv",        url: *scrip_zip}
+  # Participant / CC files: the sheet says member.bseindia.com, but they are in the public zips too.
+  - {id: 4,  grp: bse_open, type: zip, name: "BFX_CC_CO{T:%d%m%y}.csv", member: "BFX_CC_CO{P:%d%m%y}.csv",       url: "https://www.bseindia.com/downloads1/Master.zip"}
+  - {id: 6,  grp: bse_open, type: zip, name: "BFX_PARTICIPANT{T:%d%m%Y}.TXT", member: "BFX_PARTICIPANT{P:%d%m%Y}.TXT", url: "https://www.bseindia.com/downloads1/Master.zip"}
+  - {id: 33, grp: bse_open, type: zip, name: "EQD_PARTICIPANT{T:%d%m%Y}.TXT", member: "EQD_PARTICIPANT{P:%d%m%Y}.TXT", url: "https://www.bseindia.com/downloads/Help/file/CO.zip"}
+  - {id: 35, grp: bse_open, type: zip, name: "EQ_PARTICIPANT{T:%d%m%Y}.TXT", member: "EQ_PARTICIPANT{P:%d%m%Y}.TXT",  url: "https://www.bseindia.com/downloads/Help/file/scrip.zip"}
+  # Master.zip
+  - {id: 5,  grp: bse_open, type: zip, name: "BFX_DP{T:%d%m%y}", member: "BFX_DP{P:%d%m%y}",                    url: &master_zip "https://www.bseindia.com/downloads1/Master.zip"}
+  - {id: 14, grp: bse_open, type: zip, name: "BSE_BFX_CONTRACT_{T:%d%m%Y}.csv", member: "BSE_BFX_CONTRACT_{P:%d%m%Y}.csv",    url: *master_zip}
+  - {id: 15, grp: bse_open, type: zip, name: "BSE_BFX_SPDCONTRACT_{T:%d%m%Y}.csv", member: "BSE_BFX_SPDCONTRACT_{P:%d%m%Y}.csv", url: *master_zip}
+
+  # ---------------- NSE, public archives ----------------
+  - {id: 58, grp: nse_public, type: zip,  name: "Pd{P:%d%m%y}.csv", member: "pd{P:%d%m%Y}.csv", note: "NSE now names it pd<ddmmyyyy>.csv; saved under the sheet's name", url: "https://archives.nseindia.com/archives/equities/bhavcopy/pr/PR{P:%d%m%y}.zip"}
+  - {id: 61, grp: nse_public, type: http, name: "series_change.csv", url: "https://archives.nseindia.com/content/equities/series_change.csv", note: "undated file - freshness cannot be checked from the name"}
+  # The sheet lists these under extranet folders, but the same files are on the public archive.
+  - {id: 12, grp: nse_public, type: zip,  name: "BhavCopy_NSE_CM_0_0_0_{P:%Y%m%d}_F_0000.csv", url: "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{P:%Y%m%d}_F_0000.csv.zip"}
+  - {id: 13, grp: nse_public, type: zip,  name: "BhavCopy_NSE_FO_0_0_0_{P:%Y%m%d}_F_0000.csv", url: "https://nsearchives.nseindia.com/content/fo/BhavCopy_NSE_FO_0_0_0_{P:%Y%m%d}_F_0000.csv.zip"}
+  - {id: 11, grp: nse_public, type: zip,  name: "BhavCopy_NSE_CD_0_0_0_{P:%Y%m%d}_F_0000.csv", url: "https://nsearchives.nseindia.com/archives/cd/bhav/BhavCopy_NSE_CD_0_0_0_{P:%Y%m%d}_F_0000.csv.zip"}
+  - {id: 49, grp: nse_public, type: zip,  name: "nsccl.{T:%Y%m%d}.i01.spn",   url: "https://nsearchives.nseindia.com/archives/nsccl/span/nsccl.{T:%Y%m%d}.i1.zip"}
+  - {id: 50, grp: nse_public, type: zip,  name: "nsccl_x.{T:%Y%m%d}.i01.spn", url: "https://nsearchives.nseindia.com/archives/cd/span/nsccl_x.{T:%Y%m%d}.i1.zip"}
+  - {id: 26, grp: nse_public, type: http, name: "C_VAR1_{T:%d%m%Y}_1.DAT",    url: "https://nsearchives.nseindia.com/archives/nsccl/var/C_VAR1_{T:%d%m%Y}_1.DAT"}
+  - {id: 2,  grp: nse_public, type: http, name: "ael_{T:%d%m%Y}.csv",         url: "https://nsearchives.nseindia.com/archives/exp_lim/ael_{T:%d%m%Y}.csv"}
+  - {id: 39, grp: nse_public, type: http, name: "fo_secban.csv",              url: "https://nsearchives.nseindia.com/content/fo/fo_secban.csv", note: "undated file"}
+  # NSE contract/security masters: published as .csv.gz the evening before, named with THAT day (P), but the
+  # content is for T (e.g. NSE_FO_contract_26102026 holds contracts starting 27-Oct). Saved under the T name UAT uses.
+  - {id: 54, grp: nse_public, type: http, gunzip: true, name: "NSE_FO_contract_{T:%d%m%Y}.csv",    url: "https://nsearchives.nseindia.com/content/fo/NSE_FO_contract_{P:%d%m%Y}.csv.gz"}
+  - {id: 55, grp: nse_public, type: http, gunzip: true, name: "NSE_FO_spdcontract_{T:%d%m%Y}.csv", url: "https://nsearchives.nseindia.com/content/fo/NSE_FO_spdcontract_{P:%d%m%Y}.csv.gz"}
+  - {id: 53, grp: nse_public, type: http, gunzip: true, name: "NSE_CM_security_{T:%d%m%Y}.csv",    url: "https://nsearchives.nseindia.com/content/cm/NSE_CM_security_{P:%d%m%Y}.csv.gz"}
+  - {id: 51, grp: nse_public, type: http, gunzip: true, name: "NSE_CD_contract_{T:%d%m%Y}.csv",    url: "https://nsearchives.nseindia.com/content/cd/NSE_CD_contract_{P:%d%m%Y}.csv.gz"}
+  - {id: 52, grp: nse_public, type: http, gunzip: true, name: "NSE_CD_spdcontract_{T:%d%m%Y}.csv", url: "https://nsearchives.nseindia.com/content/cd/NSE_CD_spdcontract_{P:%d%m%Y}.csv.gz"}
+  - {id: 36, grp: nse_public, type: http, gunzip: true, name: "F_AEL_OPT_CONTRACTS_{T:%d%m%Y}.csv", url: "https://nsearchives.nseindia.com/content/fo/F_AEL_OPT_CONTRACTS_{T:%d%m%Y}.csv.gz"}
+  - {id: 27, grp: slbm, type: http, name: "C_VAR1_SLB_{T:%d%m%Y}_1.DAT", url: "https://archives.nseindia.com/archives/slbs/var/C_VAR1_SLB_{T:%d%m%Y}_1.DAT"}
+
+  # ---------------- BSE member portal (sheet: https://member.bseindia.com/) ----------------
+  # If these turn out to be downloadable without login, change type to http and add the url.
+  - {id: 31, grp: bse_member, type: session, name: "EQD_CC_CO{T:%d%m%y}.csv"}
+  - {id: 34, grp: bse_member, type: session, name: "EQ_MAP_CC_{T:%d%m%y}.csv"}
+
+  # ---------------- NSE member / extranet (human logs in; url filled from `record`) ----------------
+  # path = folder from the sheet, for your reference only.
+  - {id: 22, grp: nse_member, type: session, path: "/CDSCOMMON/",              name: "cd_participant.txt"}
+  - {id: 21, grp: nse_member, type: session, path: "/CDSCOMMON/tbtmaster",     name: "cd_contract_stream_info.csv"}
+  - {id: 23, grp: nse_member, type: session, path: "/CDSCOMMON/tbtmaster",     name: "cd_spd_contract_stream_info.csv"}
+  - {id: 41, grp: nse_member, type: session, path: "/CMCOMMON/ntneat",         name: "FreeFloat.txt"}
+  - {id: 47, grp: nse_member, type: session, path: "/CMCOMMON/ntneat",         name: "nnf_participant.dat"}
+  - {id: 48, grp: nse_member, type: session, path: "/CMCOMMON/ntneat",         name: "nnf_security.dat"}
+  - {id: 57, grp: nse_member, type: session, path: "/CMCOMMON/ntneat",         name: "participant.txt"}
+  - {id: 25, grp: nse_member, type: session, path: "/CMCOMMON/tbtmaster",      name: "cm_contract_stream_info.csv"}
+  - {id: 38, grp: nse_member, type: session, path: "/FAOCOMMON/",              name: "fo_participant.txt"}
+  - {id: 1,  grp: nse_member, type: session, path: "/FAOCOMMON/Bhavcopy",      name: "{P:%d%m}SPD0000.md"}
+  - {id: 3,  grp: nse_member, type: session, path: "/FAOCOMMON/Limit Files",   name: "ael_NIFTY_Options.csv"}
+  - {id: 37, grp: nse_member, type: session, path: "/FAOCOMMON/tbtmaster",      name: "fo_contract_stream_info.csv"}
+  - {id: 40, grp: nse_member, type: session, path: "/FAOCOMMON/tbtmaster",      name: "fo_spd_contract_stream_info.csv"}
+
+  # ---------------- SLBM (in the sheet, not in the 53-file UAT Annexure) ----------------
+  - {id: 56, grp: slbm, type: session, path: "/SLBCOMMON/NTNEAT", name: "participant_slb.txt"}
+  - {id: 60, grp: slbm, type: session, path: "/SLBCOMMON/NTNEAT", name: "security_slb.txt"}
+
+  # ---------------- MCX (in the sheet, not in the 53-file UAT Annexure) ----------------
+  - {id: 28, grp: mcx, type: servu, portal: mcx, dir: "/Common", name: "DailyIndexFile{P:%d%m%Y}.csv"}
+  - {id: 10, grp: mcx, type: servu, portal: mcx, dir: "/Common", name: "Bhavcopy_MCX_CO_0_0_0_{P:%Y%m%d}_F_0000.csv", note: "also under /Common/Bhavcopy/<FY>/<Month>; the copy in /Common is the same name"}
+  - {id: 42, grp: mcx, type: servu, portal: mcx, dir: "/Common/Contract Master/CTCLContractMaster", name: "MCX_ASSET_MASTER.bcp", min_modified: T}
+  - {id: 43, grp: mcx, type: servu, portal: mcx, dir: "/Common/Contract Master/CTCLContractMaster", name: "MCX_ASSET_UNDERLYING_MAP.bcp", min_modified: T}
+  - {id: 44, grp: mcx, type: servu, portal: mcx, dir: "/Common/Contract Master/CTCLContractMaster", name: "MCX_PART.bcp", min_modified: T}
+  - {id: 46, grp: mcx, type: servu, portal: mcx, dir: "/Common/Contract Master/CTCLContractMaster", name: "MCXScrips.bcp", min_modified: T}
+  - {id: 45, grp: mcx, type: servu, portal: mcx, dir: "/Common/RPFFile", name: "MCXRPF-{T:%Y%m%d}-*-01-I.spn", note: "beginning-of-day SPAN file (first of the day, time part varies)"}
+  - {id: 29, grp: mcx, type: session, path: "https://www.mcxccl.com/risk-management/daily-margin", name: "DailyMargin_{T:%Y%m%d}*.csv", note: "time part of the name varies. MCX extranet has /Common/Daily Margin/<YYYY>/<Month>/Margin Detail Report <T>.csv - same content? confirm before switching"}
+
+  # ---------------- In the UAT Annexure but NOT in the sheet ----------------
+  - {id: x1, grp: nse_public, type: http, name: "qty_freeze_{T:%d%m%Y}.csv", url: "https://nsearchives.nseindia.com/content/fo/qtyfreeze.csv", note: "undated public file saved under the UAT name; format vs UAT's file unverified"}
+  - {id: x2, grp: manual, type: manual, name: "Settlor.txt", allow_empty: true, note: "was 0 bytes on UAT; source unknown"}

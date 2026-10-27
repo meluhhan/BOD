@@ -1,0 +1,9 @@
+# see ../.gitignore (repo root); kept so this folder is safe on its own too
+.venv/
+__pycache__/
+downloads/
+staging/
+browser-profile/
+recorded_urls.json
+.env
+*.part
