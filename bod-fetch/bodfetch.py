@@ -8,7 +8,7 @@
     python bodfetch.py fetch --login     # alternative: one-shot browser inside this run (see README)
     python bodfetch.py fetch --watch --interval 20 --until 07:00
     python bodfetch.py record            # human browses/downloads; we log the URLs to put in manifest.yaml
-    python bodfetch.py login mcx         # auto-login with the ID/password from .env (portals without CAPTCHA/OTP)
+    python bodfetch.py login mcx         # test the MCX login from .env (plain HTTP, no browser)
 
 Design rules
   * manifest.yaml is the single source of truth: one row per file, nothing hard-coded here.
@@ -24,6 +24,7 @@ import base64
 import datetime as dt
 import fnmatch
 import gzip
+import html
 import hashlib
 import io
 import json
@@ -315,84 +316,107 @@ class Browser:
 
 
 # --------------------------------------------------------------------------- Serv-U (MCX member file server)
-# Runs inside a logged-in page of the portal, exactly like its own web client: read the CSRF token from
-# SessionInfo.json and send it as X-CSRF-Token. Read-only: only List and Download are ever used.
-SERVU_JS = """async ([op, arg]) => {
-  let tok;
-  try { tok = (await (await fetch('/WebClientApi/SessionInfo.json')).json()).data.csrfToken; } catch (e) { return [0, '']; }
-  const h = {headers: {'X-CSRF-Token': tok}};
-  if (op === 'list') {
-    const r = await fetch('/?Command=List&Dir=' + encodeURI(arg) + '&ListFile=List.json&NewWebClient=1', h);
-    return [r.status, await r.text()];
-  }
-  const r = await fetch('/?Command=Download&File=' + encodeURI(arg), h);
-  const b = new Uint8Array(await r.arrayBuffer());
-  let bin = '';
-  for (let i = 0; i < b.length; i += 0x8000) bin += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
-  return [r.status, (r.headers.get('content-disposition') || '') + '|' + btoa(bin)];
-}"""
-
-
-def auto_login(br: "Browser", pc: dict, shot: pathlib.Path | None = None) -> tuple[bool, str]:
-    """Fill ID/password from the environment (.env) on a portal WITHOUT CAPTCHA/OTP and submit.
-    Stops if a CAPTCHA is visible - that is the human's job, never bypassed."""
-    user, pwd = os.environ.get(pc.get("user_env", ""), ""), os.environ.get(pc.get("pass_env", ""), "")
-    if not (user and pwd):
-        return False, f"set {pc.get('user_env')} and {pc.get('pass_env')} in .env"
-    page = next((pg for pg in br.ctx.pages if pg.url.startswith(pc["login_url"])), None) or br.ctx.new_page()
-    page.goto(pc["login_url"], wait_until="domcontentloaded", timeout=60_000)
-    pw_sel = pc.get("pass_selector", "input[type=password]")
-    page.wait_for_selector(pw_sel, state="visible", timeout=30_000)
-    user_sel = pc.get("user_selector") or \
-        "input:not([type=password]):not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=submit])"
-    page.locator(user_sel).first.fill(user)
-    page.locator(pw_sel).first.fill(pwd)
-    if page.locator("img[src*=aptcha i], [id*=captcha i], [name*=captcha i], iframe[src*=recaptcha]").count():
-        return False, "page shows a CAPTCHA: ID/password are filled, finish the login in the browser window"
-    sub_sel = pc.get("submit_selector", "button[type=submit], input[type=submit]")
-    if page.locator(sub_sel).count():
-        page.locator(sub_sel).first.click()
-    else:
-        page.locator(pw_sel).first.press("Enter")
-    page.wait_for_load_state("networkidle", timeout=60_000)
-    ok_sel = pc.get("after_login_click")  # e.g. a "Welcome" dialog's OK button
-    if ok_sel and page.locator(ok_sel).count() and page.locator(ok_sel).first.is_visible():
-        page.locator(ok_sel).first.click()
-        page.wait_for_load_state("networkidle", timeout=30_000)
-    if shot:
-        shot.parent.mkdir(parents=True, exist_ok=True)
-        page.screenshot(path=str(shot))
-    if page.locator(pw_sel).count() and page.locator(pw_sel).first.is_visible():
-        return False, f"password box still shown - wrong ID/password? ({page.url})"
-    return True, f"{page.title()!r} {page.url}"
-
-
 class ServU:
-    def __init__(self, br: "Browser", pc: dict):
-        self.br, self.pc = br, pc
-        self.base = pc["login_url"].rstrip("/")
-        self.logged_in_once = False
+    """MCX's member file server (Serv-U web client), spoken to with plain HTTP - no browser.
 
-    def _call(self, op: str, arg: str):
-        page = next((pg for pg in self.br.ctx.pages if pg.url.startswith(self.base) and "Login" not in pg.url), None)
-        if page is not None:
-            st, body = page.evaluate(SERVU_JS, [op, arg])
-            ok = st == 200 and (body.lstrip().startswith("{") if op == "list" else "attachment" in body.split("|", 1)[0])
-            if ok:
-                return body
-        if self.logged_in_once:  # already re-logged in this run and it still fails
-            raise Skip("NEEDS_LOGIN", f"{self.base}: session not accepted")
-        self.logged_in_once = True
-        ok, msg = auto_login(self.br, self.pc)
-        if not ok:
-            raise Skip("NEEDS_LOGIN", msg)
-        return self._call(op, arg)
+    Same calls as its own web page: POST /Web Client/Login.xml?Command=Login (form: user, pword) returns
+    XML with a CsrfToken; then GET /?Command=List|Download with header X-CSRF-Token. Read-only: only
+    List and Download are used. ID/password come from .env (MCX: no CAPTCHA/OTP)."""
+
+    def __init__(self, http: requests.Session, pc: dict):
+        self.http, self.pc = http, pc
+        self.base = pc["login_url"].rstrip("/")
+        self.token = ""
+
+    def login(self):
+        user, pwd = os.environ.get(self.pc["user_env"], ""), os.environ.get(self.pc["pass_env"], "")
+        if not (user and pwd):
+            raise Skip("NEEDS_LOGIN", f"set {self.pc['user_env']} and {self.pc['pass_env']} in .env")
+        self.http.get(self.base + "/", timeout=(10, 60))  # sets the firewall/session cookies
+        r = self.http.post(f"{self.base}/Web Client/Login.xml?Command=Login&Sync={int(time.time() * 1000)}",
+                           data={"user": user, "pword": pwd, "viewshare": "", "language": "en,US"},
+                           headers={"Referer": self.base + "/", "Origin": self.base, "X-User-Agent": UA},
+                           timeout=(10, 60), allow_redirects=False)
+        tok = re.search(r"<CsrfToken>([^<]+)</CsrfToken>", r.text, re.I)
+        if r.status_code != 200 or not tok:
+            msg = re.search(r"<ResultText>([^<]*)</ResultText>", r.text, re.I)
+            raise Skip("NEEDS_LOGIN", f"login refused: {msg.group(1) if msg else f'HTTP {r.status_code}'}")
+        self.token = tok.group(1)
+
+    def _get(self, query: str) -> requests.Response:
+        for attempt in (1, 2):  # log in on first use, and once more if the session has expired
+            if not self.token:
+                self.login()
+            r = self.http.get(f"{self.base}/?{query}", headers={"X-CSRF-Token": self.token},
+                              timeout=(10, 300), allow_redirects=False)
+            if r.status_code == 200 and (r.text.lstrip().startswith("{") if "Command=List" in query
+                                         else "attachment" in r.headers.get("Content-Disposition", "")):
+                return r
+            self.token = ""
+        raise Skip("NEEDS_LOGIN", f"{self.base}: session not accepted (HTTP {r.status_code})")
 
     def list(self, d: str) -> list[dict]:
-        return [f for f in json.loads(self._call("list", d))["files"] if f]
+        return [f for f in self._get(f"Command=List&Dir={d}&ListFile=List.json&NewWebClient=1").json()["files"] if f]
 
     def get(self, path: str) -> bytes:
-        return base64.b64decode(self._call("get", path).split("|", 1)[1])
+        return self._get(f"Command=Download&File={path}").content
+
+
+# --------------------------------------------------------------------------- BSE public "Download Common Files" grid
+class BseGrid:
+    """member.bseindia.com shows a public file browser on its login page (no login needed): HOME > segment >
+    COMMON > MON-YYYY > DD-MM-YYYY > file. It is ASP.NET: every folder/file opens with a form post
+    (__doPostBack), so we replay those posts with the page's hidden fields. Idea from a colleague's bse.py."""
+
+    BASE = "https://member.bseindia.com/"
+    ITEM = re.compile(r"__doPostBack\(&#39;(FileGridVB1\$gvFiles\$ctl\d+\$(?:lbFolderItem|ltlFileItem))"
+                      r"&#39;,&#39;&#39;\)\"[^>]*>(.*?)</a>", re.S)
+
+    def __init__(self, http: requests.Session):
+        self.http = http
+
+    def _home(self) -> str:
+        r = self.http.get(self.BASE, timeout=(10, 60))
+        r.raise_for_status()
+        m = re.search(r'<form[^>]*action="([^"]*)"', r.text)
+        self.action = requests.compat.urljoin(r.url, html.unescape(m.group(1))) if m else r.url
+        return r.text
+
+    def _post(self, page: str, target: str) -> requests.Response:
+        fields = {html.unescape(n): html.unescape(v) for n, v in
+                  re.findall(r'<input type="hidden" name="([^"]+)" id="[^"]*" value="([^"]*)"', page)}
+        fields.update(__EVENTTARGET=target, __EVENTARGUMENT="")
+        r = self.http.post(self.action, data=fields, timeout=(10, 120), headers={"Referer": self.BASE})
+        r.raise_for_status()
+        return r
+
+    @classmethod
+    def items(cls, page: str) -> dict[str, str]:
+        out = {}
+        for target, inner in cls.ITEM.findall(page):
+            name = html.unescape(re.sub(r"<[^>]+>", "", inner)).replace("\xa0", " ").strip()
+            if name:
+                out[name] = target
+        return out
+
+    def open(self, path: list[str]) -> str:
+        page = self._home()
+        for i, name in enumerate(path):
+            listing = {k.upper(): v for k, v in self.items(page).items()}
+            if name.upper() not in listing:
+                raise Skip("NOT_PUBLISHED", f"folder '{'/'.join(path[:i + 1])}' not listed")
+            page = self._post(page, listing[name.upper()]).text
+        return page
+
+    def get(self, path: list[str], name: str) -> bytes:
+        page = self.open(path)
+        listing = self.items(page)
+        if name not in listing:
+            raise Skip("NOT_PUBLISHED", f"'{name}' not in {'/'.join(path)}")
+        r = self._post(page, listing[name])
+        if name.lower() not in r.headers.get("Content-Disposition", "").lower():
+            raise Skip("FAILED", f"expected {name}, got {r.headers.get('content-type', '?')} page")
+        return r.content
 
 
 # --------------------------------------------------------------------------- run context
@@ -493,14 +517,12 @@ class Run:
 
             elif kind == "servu":
                 # file on a Serv-U portal (MCX): list the folder, pick the file, download it.
-                if self.browser is None:
-                    raise Skip("NEEDS_LOGIN", "no login browser")
                 portal = e["portal"]
                 if portal not in self.servu:
                     pc = (self.cfg.get("settings", {}).get("session", {}).get("portals") or {}).get(portal)
                     if not pc:
                         raise RuntimeError(f"portal '{portal}' missing in settings.session.portals")
-                    self.servu[portal] = ServU(self.browser, pc)
+                    self.servu[portal] = ServU(self.http, pc)
                 su = self.servu[portal]
                 files = [f for f in su.list(e["dir"]) if not f["isDir"]]
                 hits = sorted((f for f in files if fnmatch.fnmatchcase(
@@ -517,6 +539,13 @@ class Run:
                 data = su.get(f"{e['dir']}/{name}")
                 if int(f.get("size", -1)) not in (-1, len(data)):
                     raise Skip("FAILED", f"size {len(data)} != listed {f['size']}")
+
+            elif kind == "bsegrid":
+                # BSE public "Download Common Files" grid (no login): dir = folder names, member = file name there
+                path = [render(x, T, P) for x in e["dir"]]
+                member = render(e.get("member", e["name"]), T, P)
+                data = BseGrid(self.http).get(path, member)
+                used_url = f"{BseGrid.BASE} > {' > '.join(path)} > {member}"
 
             elif kind == "session":
                 if not e.get("url"):
@@ -631,12 +660,9 @@ def cmd_fetch(args):
 
     load_env(base / ".env")
     needs_session = any(e.get("type") == "session" and e.get("url") for e in entries)
-    needs_servu = any(e.get("type") == "servu" for e in entries)
     port = int(sess.get("cdp_port", 9222))
     try:
-        if needs_servu and not cdp_alive(port) and not args.login:
-            start_browser(sess, base, [])  # Serv-U portals log themselves in from .env
-        if (needs_session or needs_servu) and cdp_alive(port):
+        if needs_session and cdp_alive(port):
             print(f"Using the logged-in browser window (started by `bodfetch.py browser`, port {port}).")
             run.browser = Browser(pathlib.Path("."), headless=False, probe_url=sess.get("probe_url", ""),
                                   login_marker=sess.get("login_marker", "login"), cdp_port=port)
@@ -734,23 +760,19 @@ def start_browser(sess: dict, base: pathlib.Path, urls: list[str]) -> int:
 
 
 def cmd_login(args):
-    """Fill in ID/password from .env on a portal's login page, in the shared login browser.
-    Only for portals WITHOUT CAPTCHA/OTP (per the firm: MCX). If a CAPTCHA/OTP shows up we stop and
-    leave it to the human - it is never bypassed."""
+    """Test a portal login from .env (plain HTTP, no browser): log in and list the home folder."""
     cfg, s, base, cal = load(pathlib.Path(args.manifest))
     load_env(base / ".env")
-    sess = s.get("session", {})
-    pc = (sess.get("portals") or {}).get(args.portal)
+    pc = (s.get("session", {}).get("portals") or {}).get(args.portal)
     if not pc:
         raise SystemExit(f"No portal '{args.portal}' under settings.session.portals in manifest.yaml")
-    br = Browser(pathlib.Path("."), headless=False, cdp_port=start_browser(sess, base, []))
     try:
-        shot = base / "browser-profile" / f"last_login_{args.portal}.png"  # git-ignored folder
-        ok, msg = auto_login(br, pc, shot)
-        print(f"{'Logged in' if ok else 'LOGIN NOT DONE'}: {msg}\nScreenshot: {shot}")
-        return 0 if ok else 1
-    finally:
-        br.close()
+        names = [requests.utils.unquote(f["name"]) for f in ServU(make_http(), pc).list("/")]
+    except Skip as sk:
+        print(f"LOGIN NOT DONE: {sk.detail}")
+        return 1
+    print(f"Logged in to {pc['login_url']} - top-level folders: {names}")
+    return 0
 
 
 def main():
@@ -770,7 +792,7 @@ def main():
             p.add_argument("--force", action="store_true", help="re-download even if already fetched")
         if name == "record":
             p.add_argument("--seconds", type=int, help="stop recording after N seconds (default: Enter / Ctrl+C)")
-    p = sub.add_parser("login", help="auto-fill ID/password from .env (portals without CAPTCHA/OTP)")
+    p = sub.add_parser("login", help="test a portal login from .env (MCX)")
     p.add_argument("portal", help="portal name under settings.session.portals, e.g. mcx")
     p.set_defaults(fn=cmd_login)
     args = ap.parse_args()

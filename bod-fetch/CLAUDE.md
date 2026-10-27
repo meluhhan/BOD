@@ -253,10 +253,15 @@ keeps it alive and prompts for re-login if the probe fails.
   BSE `EQD_CC_CO`, `EQ_MAP_CC` (ICCL common-contract-note files, member extranet); all 8 MCX (mcxindia/mcxccl return 403 to
   scripts via Akamai; not bypassed). `Settlor.txt`: no source.
 * Result 27-Oct: 37/53 UAT files fetched with UAT's exact names, no login.
+* **BSE CC files solved (27-Oct, VERIFIED; idea from a colleague's bse.py):** member.bseindia.com's login page has a
+  PUBLIC "Download Common Files" grid (ASP.NET, every click is a __doPostBack form post): <segment> > COMMON > MON-YYYY >
+  DD-MM-YYYY. `EQ_MAP_CC_<P>.csv` (EQ) and `EQD_CC_CO<P>.csv` (FNO) sit in the P folder and are saved under UAT's T names
+  (EQD_CC_CO has expiries 27-Oct and none 26-Oct). Row type `bsegrid` (class `BseGrid`). No BSE login needed at all now.
 * **MCX solved (27-Oct, VERIFIED):** MCX member files are on a Serv-U web client at https://sftp.mcxindia.com/ (shared
   "Common User ID For FTP"; ID/password only, in `.env`). The `/Web Client/Mobile/MLogin.html` URL is rejected by MCX's
-  firewall - use the root. Serv-U API, called from inside the logged-in page with header `X-CSRF-Token` =
-  `SessionInfo.json` -> `data.csrfToken`: `/?Command=List&Dir=<path>&ListFile=List.json&NewWebClient=1` and
+  firewall - use the root. **Plain HTTP, no browser** (class `ServU`): GET `/` (cookies), POST
+  `/Web Client/Login.xml?Command=Login&Sync=<ms>` form `user,pword,viewshare,language` -> XML `<CsrfToken>`; then with
+  header `X-CSRF-Token`: `/?Command=List&Dir=<path>&ListFile=List.json&NewWebClient=1` and
   `/?Command=Download&File=<path>` (paths unencoded except spaces; encodeURIComponent breaks it). A request WITHOUT the
   token makes the server clear the session. Row type `servu`. Locations: `/Common/DailyIndexFile<P>.csv`,
   `/Common/Bhavcopy_MCX_CO_..._<P>_F_0000.csv`, `/Common/Contract Master/CTCLContractMaster/*.bcp` (~01:51 on T),

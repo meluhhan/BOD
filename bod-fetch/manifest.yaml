@@ -13,8 +13,9 @@
 # Those rows take exactly the P-named file and save it under the T name UAT uses. Exactly P, never
 # "T or P": an evening run would otherwise grab tonight's file, which is for the NEXT day.
 #   session  needs the human-logged-in browser; `url` is blank until you record it (bodfetch.py record)
-#   servu    file on a Serv-U portal (MCX): `portal`, `dir`; name may contain * ; auto-login from .env
+#   servu    file on a Serv-U portal (MCX): `portal`, `dir`; name may contain * ; HTTP login from .env
 #            min_modified: T -> for undated names, only a copy modified on/after the BOD date
+#   bsegrid  BSE member site's public file grid (no login): `dir` = folder names, `member` = file
 #   manual   source not known yet (reported, never silently skipped)
 # optional: true   -> a 404 is fine (e.g. fo_secban.csv, sheet says "Not Found")
 # grp is only for `--only` filtering.
@@ -26,7 +27,6 @@ settings:
   session:
     login_urls:                             # one tab each; the human logs in to all of them
       - "https://www.nseindia.com"          # TODO: the NSE member/extranet login page you use
-      - "https://member.bseindia.com/"      # BSE member portal (rows 31, 34)
       # - "<MCX member portal login>"       # TODO: for the mcx rows
     probe_url: ""                           # TODO: any URL that only works when logged in (detects expiry)
     login_marker: "login"                   # if the probe lands on a URL containing this, we are logged out
@@ -34,16 +34,10 @@ settings:
     cdp_port: 9222                        # `bodfetch.py browser` listens here (127.0.0.1 only); fetch/record attach
     use_saved_profile: false                # true = try cookies saved in the profile without --login
     portals:                                # `bodfetch.py login <name>`: auto-login, values come from .env
-      mcx:                                  # firm says: ID + password only, no CAPTCHA/OTP
-        # Serv-U web client of MCX's member file server. The /Web Client/Mobile/MLogin.html page is
-        # rejected by MCX's firewall; the root page works.
-        login_url: "https://sftp.mcxindia.com/"
+      mcx:                                  # MCX member file server (Serv-U); ID + password only, no CAPTCHA/OTP
+        login_url: "https://sftp.mcxindia.com/"   # plain HTTP login + List/Download API, no browser
         user_env: MCX_USER                  # ID and password come from .env
         pass_env: MCX_PASSWORD
-        user_selector: "#user-box-text"
-        pass_selector: "#pword-box-text"
-        submit_selector: "#btn-LoginButton"
-        after_login_click: "#btn-WelcomeDialogOkButton"
 
 files:
   # ---------------- BSE, open URLs (20 files from 9 requests) ----------------
@@ -96,10 +90,10 @@ files:
   - {id: 36, grp: nse_public, type: http, gunzip: true, name: "F_AEL_OPT_CONTRACTS_{T:%d%m%Y}.csv", url: "https://nsearchives.nseindia.com/content/fo/F_AEL_OPT_CONTRACTS_{T:%d%m%Y}.csv.gz"}
   - {id: 27, grp: slbm, type: http, name: "C_VAR1_SLB_{T:%d%m%Y}_1.DAT", url: "https://archives.nseindia.com/archives/slbs/var/C_VAR1_SLB_{T:%d%m%Y}_1.DAT"}
 
-  # ---------------- BSE member portal (sheet: https://member.bseindia.com/) ----------------
-  # If these turn out to be downloadable without login, change type to http and add the url.
-  - {id: 31, grp: bse_member, type: session, name: "EQD_CC_CO{T:%d%m%y}.csv"}
-  - {id: 34, grp: bse_member, type: session, name: "EQ_MAP_CC_{T:%d%m%y}.csv"}
+  # ---------------- BSE member portal, public "Download Common Files" grid (no login) ----------------
+  # member.bseindia.com > <segment> > COMMON > MON-YYYY > DD-MM-YYYY (folder = P, the evening it is made).
+  - {id: 31, grp: bse_open, type: bsegrid, dir: [FNO, COMMON, "{P:%b-%Y}", "{P:%d-%m-%Y}"], name: "EQD_CC_CO{T:%d%m%y}.csv", member: "EQD_CC_CO{P:%d%m%y}.csv"}
+  - {id: 34, grp: bse_open, type: bsegrid, dir: [EQ, COMMON, "{P:%b-%Y}", "{P:%d-%m-%Y}"], name: "EQ_MAP_CC_{T:%d%m%y}.csv", member: "EQ_MAP_CC_{P:%d%m%y}.csv"}
 
   # ---------------- NSE member / extranet (human logs in; url filled from `record`) ----------------
   # path = folder from the sheet, for your reference only.

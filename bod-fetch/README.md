@@ -19,10 +19,9 @@ Add extra closures by hand as `YYYY-MM-DD  # reason # manual`.
 
 | Source | Files | Login |
 |---|---|---|
-| BSE public site + NSE public archive | 37 of the 62 sheet rows, plus `qty_freeze` | none |
+| BSE public site (incl. the member site's public "Download Common Files" grid) + NSE public archive | 39 of the 62 sheet rows, plus `qty_freeze` | none |
 | NSE member extranet | 15 (`nse_member`, 2 `slbm`) | human: CAPTCHA/OTP |
-| BSE member portal | 2 (`EQD_CC_CO`, `EQ_MAP_CC`) | human |
-| MCX member file server (Serv-U, sftp.mcxindia.com) | 7 (`mcx`) | automatic, ID/password from `.env` |
+| MCX member file server (Serv-U, sftp.mcxindia.com) | 7 (`mcx`) | automatic, plain HTTP login with ID/password from `.env` |
 | MCXCCL daily margin page (refuses scripts) | 1 (`DailyMargin_*`) | open question |
 
 ## Daily use
@@ -47,17 +46,16 @@ holds your session cookies: never copy or commit it.
 Alternative without a separate window: `fetch --login` opens a browser inside that run and waits
 for Enter after you log in.
 
-## Auto-login (MCX: ID + password, no CAPTCHA/OTP)
+## MCX login (ID + password, no CAPTCHA/OTP, no browser)
 
 ```bash
 cp .env.example .env && chmod 600 .env     # then fill MCX_USER, MCX_PASSWORD
-python bodfetch.py login mcx               # optional: just test the login
-python bodfetch.py fetch --only mcx        # starts the browser and logs in by itself if needed
+python bodfetch.py login mcx               # optional: test the login
+python bodfetch.py fetch --only mcx        # logs in over HTTP by itself
 ```
 
-`.env` is git-ignored; values are never printed. If a CAPTCHA shows up, the script stops after
-filling ID/password and you finish by hand. A screenshot of the result goes to
-`browser-profile/last_login_mcx.png`.
+`.env` is git-ignored; values are never printed. Everything except the NSE extranet runs with plain
+HTTP (`requests`); the browser (Playwright) is only for the NSE login.
 
 ## One-time: record the download URLs for the login files
 
