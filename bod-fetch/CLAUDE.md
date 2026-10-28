@@ -268,6 +268,14 @@ keeps it alive and prompts for re-login if the probe fails.
   `/Common/RPFFile/MCXRPF-<T>-<hhmm>-01-I.spn` (BOD file ~06:00 on T). 7/8 MCX fetched unattended.
   OPEN: `DailyMargin_<T><hhmmss>.csv` is from mcxccl.com (403 to scripts); extranet has
   `/Common/Daily Margin/<YYYY>/<Month>/Margin Detail Report <T>.csv` - same data? ask ops before switching.
+* **Push stage built and VERIFIED live (28-Oct: 46 files / 312.6 MB into .76 `contract_test` in 54 s, checksums verified,
+  re-run = SAME 46; auth via UAT_SSH_PASSWORD in .env; paramiko SFTP open needs "wx" not "x" for the lock):** `bodpush.py` + `bodfetch.py push`.
+  Scope = the 62 Servers List rows (`--only sheet`), NOT Annexure A's 53. Paramiko SFTP straight to .76 (no .73 hop),
+  host key must be in known_hosts (RejectPolicy). Flow: collect (sha256 vs state.json) -> plan NEW/REPLACE/SAME ->
+  stage `.part`+rename + server `sha256sum` -> back up replaced files (`cp -p`) -> `posix_rename` into target -> verify.
+  Lock file `<staging>/.push.lock`. Target `settings.push.target_dir` = `/home/greek/Desktop/contract_test`; a target
+  named `contract` needs `--live`. `Remote` protocol with `SshRemote` and `LocalRemote` (tests, `--local`).
+  Tests: `tests/test_push.py`. Auth: ssh-agent keys, else key_file+passphrase / password from .env.
 * `BhavCopy_BSE_CD_..._20261026` from BSE is 311 bytes (header only) - probably no BSE currency trades; check vs UAT.
 * `--only sheet` = the 62 numbered rows. Root-level duplicate copies of the code were removed; this folder is the project.
 

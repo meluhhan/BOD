@@ -1,7 +1,13 @@
-# bodfetch
+# BOD - bodfetch
 
-Fetches the daily BOD exchange/contract files into `downloads/<BOD date>/` (inside this folder).
-It never touches UAT. Pushing to .76 is a separate, later step.
+Automation of the daily BOD (Beginning of Day) routine for the Greeksoft UAT trading platform.
+
+- `bodfetch.py fetch` downloads the daily exchange/contract files (BSE, NSE, MCX) listed in the GreekSoft
+  "Servers List with Configuration - BOD Files" sheet into `downloads/<BOD date>/`.
+- `bodfetch.py push` copies them to the UAT server (.76) over SFTP (see "Push to the UAT server" below).
+
+Not in this repo on purpose: the source documents (PDF/DOCX), `.env` credentials and the login browser profile
+(see `.gitignore`). `downloads/` IS committed (each day's files + state/report/push logs; ~300 MB per trading day).
 
 ## Setup (Mac, once)
 
@@ -56,6 +62,28 @@ python bodfetch.py fetch --only mcx        # logs in over HTTP by itself
 
 `.env` is git-ignored; values are never printed. Everything except the NSE extranet runs with plain
 HTTP (`requests`); the browser (Playwright) is only for the NSE login.
+
+## Push to the UAT server (no RDP/.73 hop)
+
+`bodfetch.py push` copies the day's files straight from this machine to the UAT server (.76) over SFTP -
+the same protocol WinSCP uses - following the procedure's "staging folder first, then replace":
+stage in `bod_push/staging/<date>/` -> check sha256 on the server -> back up files it will overwrite to
+`bod_push/backup/<date>/` -> swap into the target -> verify. The target is untouched until every file is
+staged and verified; nothing else in it is changed or deleted. Target now: `~/Desktop/contract_test`
+(testing). Writing into the live `contract` folder needs `--live`.
+
+One-time SSH key setup (Mac Terminal; asks your key passphrase, then greek's password once):
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+ssh-copy-id greek@192.168.1.76
+```
+
+```bash
+python bodfetch.py push --dry-run                 # what would change; writes nothing
+python bodfetch.py push                           # refuses if any Servers List file is missing
+python bodfetch.py push --allow-partial           # push what is ready (while NSE login files are pending)
+python bodfetch.py push --local /tmp/fake_uat     # same flow into a local folder, no server needed
+```
 
 ## One-time: record the download URLs for the login files
 

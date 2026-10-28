@@ -1,3 +1,4 @@
 requests
 pyyaml
+paramiko    # bodfetch.py push (SFTP to the UAT server)
 playwright   # only for the NSE extranet login browser: then run `playwright install chromium`

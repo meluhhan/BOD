@@ -1,0 +1,220 @@
+S.No.,SYMBOL    ,VOL_FRZ_QTY    
+1    ,BANKNIFTY ,1440           
+2    ,FINNIFTY  ,3240           
+3    ,MIDCPNIFTY,5760           
+4    ,NIFTY     ,3510           
+5    ,NIFTYFPI  ,53900          
+6    ,NIFTYNXT50,1125           
+7    ,360ONE    ,20000          
+8    ,ABB       ,3750           
+9    ,ABCAPITAL ,62000          
+10   ,ADANIENSOL,20250          
+11   ,ADANIENT  ,9270           
+12   ,ADANIGREEN,18000          
+13   ,ADANIPORTS,14250          
+14   ,ADANIPOWER,106500         
+15   ,ALKEM     ,5000           
+16   ,AMBER     ,3000           
+17   ,AMBUJACEM ,60000          
+18   ,ANANDRATHI,12500          
+19   ,ANGELONE  ,75000          
+20   ,APLAPOLLO ,10500          
+21   ,APOLLOHOSP,2500           
+22   ,ASHOKLEY  ,150000         
+23   ,ASIANPAINT,10000          
+24   ,ASTRAL    ,17000          
+25   ,ATHERENERG,15000          
+26   ,AUBANK    ,20000          
+27   ,AUROPHARMA,16500          
+28   ,AXISBANK  ,18750          
+29   ,BAJAJ-AUTO,2250           
+30   ,BAJAJFINSV,12000          
+31   ,BAJAJHLDNG,2250           
+32   ,BAJFINANCE,22500          
+33   ,BANDHANBNK,144000         
+34   ,BANKBARODA,87750          
+35   ,BANKINDIA ,156000         
+36   ,BDL       ,17000          
+37   ,BEL       ,57000          
+38   ,BHARATFORG,15000          
+39   ,BHARTIARTL,14250          
+40   ,BHEL      ,52500          
+41   ,BIOCON    ,75000          
+42   ,BLUESTARCO,13000          
+43   ,BOSCHLTD  ,500            
+44   ,BPCL      ,79000          
+45   ,BRITANNIA ,5000           
+46   ,BSE       ,6000           
+47   ,CAMS      ,33000          
+48   ,CANBK     ,202500         
+49   ,CDSL      ,19000          
+50   ,CGPOWER   ,25500          
+51   ,CHOLAFIN  ,12500          
+52   ,CIPLA     ,17000          
+53   ,COALINDIA ,54000          
+54   ,COCHINSHIP,16000          
+55   ,COFORGE   ,14250          
+56   ,COLPAL    ,13750          
+57   ,CONCOR    ,50000          
+58   ,CROMPTON  ,86000          
+59   ,CUMMINSIND,6000           
+60   ,DABUR     ,50000          
+61   ,DELHIVERY ,62250          
+62   ,DIVISLAB  ,3000           
+63   ,DIXON     ,1500           
+64   ,DLF       ,38000          
+65   ,DMART     ,6000           
+66   ,DRREDDY   ,18750          
+67   ,EICHERMOT ,3000           
+68   ,ENRIN     ,7000           
+69   ,ETERNAL   ,72750          
+70   ,FEDERALBNK,75000          
+71   ,FORCEMOT  ,1250           
+72   ,FORTIS    ,31000          
+73   ,GAIL      ,142000         
+74   ,GLENMARK  ,11250          
+75   ,GMRAIRPORT,209250         
+76   ,GODFRYPHLP,11000          
+77   ,GODREJCP  ,25000          
+78   ,GODREJPROP,13000          
+79   ,GRASIM    ,7500           
+80   ,GVT&D     ,5000           
+81   ,HAL       ,4500           
+82   ,HAVELLS   ,20000          
+83   ,HCLTECH   ,20000          
+84   ,HDFCAMC   ,9000           
+85   ,HDFCBANK  ,32500          
+86   ,HDFCLIFE  ,44000          
+87   ,HEROMOTOCO,4500           
+88   ,HINDALCO  ,21000          
+89   ,HINDPETRO ,60750          
+90   ,HINDUNILVR,12000          
+91   ,HINDZINC  ,36750          
+92   ,HYUNDAI   ,11000          
+93   ,ICICIBANK ,21000          
+94   ,ICICIGI   ,16250          
+95   ,ICICILIFE ,46250          
+96   ,IDEA      ,1429500        
+97   ,IDFCFIRSTB,278250         
+98   ,IEX       ,174000         
+99   ,INDHOTEL  ,30000          
+100  ,INDIANB   ,30000          
+101  ,INDIGO    ,4500           
+102  ,INDUSINDBK,28000          
+103  ,INDUSTOWER,68000          
+104  ,INFY      ,20000          
+105  ,INOXWIND  ,320000         
+106  ,IOC       ,195000         
+107  ,IREDA     ,181000         
+108  ,IRFC      ,271250         
+109  ,ITC       ,86250          
+110  ,JINDALSTEL,18750          
+111  ,JIOFIN    ,94000          
+112  ,JSWENERGY ,43000          
+113  ,JSWSTEEL  ,20250          
+114  ,JUBLFOOD  ,50000          
+115  ,KALYANKJIL,40500          
+116  ,KAYNES    ,6000           
+117  ,KEI       ,5250           
+118  ,KFINTECH  ,23000          
+119  ,KOTAKBANK ,60000          
+120  ,KPITTECH  ,38750          
+121  ,LAURUSLABS,17000          
+122  ,LICHSGFIN ,40000          
+123  ,LICI      ,56000          
+124  ,LODHA     ,18750          
+125  ,LT        ,7000           
+126  ,LTF       ,90000          
+127  ,LTM       ,6000           
+128  ,LUPIN     ,12750          
+129  ,M&M       ,8000           
+130  ,MAHABANK  ,260000         
+131  ,MANAPPURAM,60000          
+132  ,MANKIND   ,10000          
+133  ,MARICO    ,36000          
+134  ,MARUTI    ,2000           
+135  ,MAXHEALTH ,21000          
+136  ,MAZDOCK   ,9000           
+137  ,MCX       ,6750           
+138  ,MFSL      ,16000          
+139  ,MOTHERSON ,184500         
+140  ,MOTILALOFS,23250          
+141  ,MPHASIS   ,11000          
+142  ,MUTHOOTFIN,8250           
+143  ,NAM-INDIA ,18750          
+144  ,NATIONALUM,56250          
+145  ,NAUKRI    ,16500          
+146  ,NBCC      ,260000         
+147  ,NESTLEIND ,15000          
+148  ,NHPC      ,347500         
+149  ,NMDC      ,270000         
+150  ,NTPC      ,75000          
+151  ,NYKAA     ,93750          
+152  ,OBEROIRLTY,14000          
+153  ,OFSS      ,2000           
+154  ,OIL       ,56000          
+155  ,ONGC      ,90000          
+156  ,PAGEIND   ,600            
+157  ,PATANJALI ,53750          
+158  ,PAYTM     ,14500          
+159  ,PERSISTENT,5000           
+160  ,PETRONET  ,76000          
+161  ,PFC       ,65000          
+162  ,PGEL      ,38000          
+163  ,PHOENIXLTD,14000          
+164  ,PIDILITIND,15000          
+165  ,PIIND     ,8750           
+166  ,PNB       ,240000         
+167  ,PNBHOUSING,19500          
+168  ,POLICYBZR ,14000          
+169  ,POLYCAB   ,2500           
+170  ,POWERGRID ,95000          
+171  ,POWERINDIA,750            
+172  ,PREMIERENE,26000          
+173  ,PRESTIGE  ,13500          
+174  ,RADICO    ,6000           
+175  ,RBLBANK   ,63500          
+176  ,RECLTD    ,63000          
+177  ,RELIANCE  ,20000          
+178  ,RVNL      ,96250          
+179  ,SAGILITY  ,480000         
+180  ,SAIL      ,141000         
+181  ,SBICARD   ,40000          
+182  ,SBILIFE   ,15000          
+183  ,SBIN      ,22500          
+184  ,SHREECEM  ,1000           
+185  ,SHRIRAMFIN,24750          
+186  ,SIEMENS   ,7000           
+187  ,SOLARINDS ,1000           
+188  ,SONACOMS  ,36750          
+189  ,SRF       ,10000          
+190  ,SUNPHARMA ,14000          
+191  ,SUPREMEIND,7000           
+192  ,SUZLON    ,508000         
+193  ,SWIGGY    ,91250          
+194  ,TATACONSUM,22000          
+195  ,TATAELXSI ,6250           
+196  ,TATAPOWER ,58000          
+197  ,TATASTEEL ,137500         
+198  ,TCS       ,9000           
+199  ,TECHM     ,18000          
+200  ,TIINDIA   ,8000           
+201  ,TITAN     ,5250           
+202  ,TMPV      ,64000          
+203  ,TORNTPHARM,5000           
+204  ,TRENT     ,9000           
+205  ,TVSMOTOR  ,5250           
+206  ,UJJIVANSFB,400000         
+207  ,ULTRACEMCO,2000           
+208  ,UNIONBANK ,132750         
+209  ,UNITDSPR  ,16000          
+210  ,UNOMINDA  ,22000          
+211  ,UPL       ,40650          
+212  ,VBL       ,51000          
+213  ,VEDL      ,80500          
+214  ,VMM       ,194000         
+215  ,VOLTAS    ,18750          
+216  ,WAAREEENER,8750           
+217  ,WIPRO     ,120000         
+218  ,YESBANK   ,933000         
+219  ,ZYDUSLIFE ,27000          

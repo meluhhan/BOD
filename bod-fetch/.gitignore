@@ -1,9 +1,24 @@
-# see ../.gitignore (repo root); kept so this folder is safe on its own too
-.venv/
-__pycache__/
-downloads/
-staging/
+# --- never commit: source documents (internal; the production checklist contains passwords)
+*.pdf
+*.docx
+*.xlsx
+
+# --- secrets and sessions
+.env
+.env.*
+!.env.example
 browser-profile/
 recorded_urls.json
-.env
+
+# --- generated data (downloads/ IS committed, by decision 28-Oct)
+staging/
 *.part
+
+# --- Python / OS / editors
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/

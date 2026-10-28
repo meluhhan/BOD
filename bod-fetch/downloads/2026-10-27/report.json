@@ -1,0 +1,50 @@
+[
+ {
+  "id": 28,
+  "name": "DailyIndexFile26102026.csv",
+  "status": "OK",
+  "detail": "854 bytes"
+ },
+ {
+  "id": 10,
+  "name": "Bhavcopy_MCX_CO_0_0_0_20261026_F_0000.csv",
+  "status": "OK",
+  "detail": "2,489,715 bytes"
+ },
+ {
+  "id": 42,
+  "name": "MCX_ASSET_MASTER.bcp",
+  "status": "OK",
+  "detail": "2,791 bytes"
+ },
+ {
+  "id": 43,
+  "name": "MCX_ASSET_UNDERLYING_MAP.bcp",
+  "status": "OK",
+  "detail": "13,482 bytes"
+ },
+ {
+  "id": 44,
+  "name": "MCX_PART.bcp",
+  "status": "OK",
+  "detail": "33,650 bytes"
+ },
+ {
+  "id": 46,
+  "name": "MCXScrips.bcp",
+  "status": "OK",
+  "detail": "9,908,557 bytes"
+ },
+ {
+  "id": 45,
+  "name": "MCXRPF-20261027-0603-01-I.spn",
+  "status": "OK",
+  "detail": "6,986,407 bytes"
+ },
+ {
+  "id": 29,
+  "name": "DailyMargin_20261027*.csv",
+  "status": "NEEDS_URL",
+  "detail": "name has a wildcard; record the real download, then set an exact name"
+ }
+]

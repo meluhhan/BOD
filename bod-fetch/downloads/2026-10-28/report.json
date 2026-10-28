@@ -1,0 +1,374 @@
+[
+ {
+  "id": 7,
+  "name": "BhavCopy_BSE_CD_0_0_0_20261027_F_0000.CSV",
+  "status": "OK",
+  "detail": "311 bytes"
+ },
+ {
+  "id": 8,
+  "name": "BhavCopy_BSE_CM_0_0_0_20261027_F_0000.CSV",
+  "status": "OK",
+  "detail": "856,277 bytes"
+ },
+ {
+  "id": 9,
+  "name": "BhavCopy_BSE_FO_0_0_0_20261027_F_0000.CSV",
+  "status": "OK",
+  "detail": "167,176 bytes"
+ },
+ {
+  "id": 62,
+  "name": "VAR281026.xls",
+  "status": "OK",
+  "detail": "3,132,928 bytes"
+ },
+ {
+  "id": 16,
+  "name": "BSECDXRISK20261028-00.spn",
+  "status": "OK",
+  "detail": "9,540,491 bytes"
+ },
+ {
+  "id": 20,
+  "name": "BSERISK20261028-00.spn",
+  "status": "OK",
+  "detail": "56,522,026 bytes"
+ },
+ {
+  "id": 17,
+  "name": "BSE_EQD_CONTRACT_28102026.csv",
+  "status": "OK",
+  "detail": "14,080,380 bytes"
+ },
+ {
+  "id": 18,
+  "name": "BSE_EQD_SPDCONTRACT_28102026.csv",
+  "status": "OK",
+  "detail": "304,199 bytes"
+ },
+ {
+  "id": 32,
+  "name": "EQD_DP281026",
+  "status": "OK",
+  "detail": "2,547,703 bytes"
+ },
+ {
+  "id": 19,
+  "name": "BSE_EQ_SCRIP_28102026.csv",
+  "status": "OK",
+  "detail": "4,386,235 bytes"
+ },
+ {
+  "id": 24,
+  "name": "CI281026.txt",
+  "status": "OK",
+  "detail": "231,426 bytes"
+ },
+ {
+  "id": 30,
+  "name": "DP281026",
+  "status": "OK",
+  "detail": "1,273,829 bytes"
+ },
+ {
+  "id": 59,
+  "name": "REG_IND281026.csv",
+  "status": "OK",
+  "detail": "565,283 bytes"
+ },
+ {
+  "id": 4,
+  "name": "BFX_CC_CO281026.csv",
+  "status": "OK",
+  "detail": "5,858,251 bytes"
+ },
+ {
+  "id": 6,
+  "name": "BFX_PARTICIPANT28102026.TXT",
+  "status": "OK",
+  "detail": "48,031 bytes"
+ },
+ {
+  "id": 33,
+  "name": "EQD_PARTICIPANT28102026.TXT",
+  "status": "OK",
+  "detail": "1,051,634 bytes"
+ },
+ {
+  "id": 35,
+  "name": "EQ_PARTICIPANT28102026.TXT",
+  "status": "OK",
+  "detail": "2,331,293 bytes"
+ },
+ {
+  "id": 5,
+  "name": "BFX_DP281026",
+  "status": "OK",
+  "detail": "1,073,556 bytes"
+ },
+ {
+  "id": 14,
+  "name": "BSE_BFX_CONTRACT_28102026.csv",
+  "status": "OK",
+  "detail": "4,814,381 bytes"
+ },
+ {
+  "id": 15,
+  "name": "BSE_BFX_SPDCONTRACT_28102026.csv",
+  "status": "OK",
+  "detail": "610,508 bytes"
+ },
+ {
+  "id": 58,
+  "name": "Pd271026.csv",
+  "status": "OK",
+  "detail": "669,371 bytes"
+ },
+ {
+  "id": 61,
+  "name": "series_change.csv",
+  "status": "OK",
+  "detail": "67 bytes"
+ },
+ {
+  "id": 12,
+  "name": "BhavCopy_NSE_CM_0_0_0_20261027_F_0000.csv",
+  "status": "OK",
+  "detail": "631,301 bytes"
+ },
+ {
+  "id": 13,
+  "name": "BhavCopy_NSE_FO_0_0_0_20261027_F_0000.csv",
+  "status": "OK",
+  "detail": "7,653,440 bytes"
+ },
+ {
+  "id": 11,
+  "name": "BhavCopy_NSE_CD_0_0_0_20261027_F_0000.csv",
+  "status": "OK",
+  "detail": "1,952,025 bytes"
+ },
+ {
+  "id": 49,
+  "name": "nsccl.20261028.i01.spn",
+  "status": "OK",
+  "detail": "51,807,117 bytes"
+ },
+ {
+  "id": 50,
+  "name": "nsccl_x.20261028.i01.spn",
+  "status": "OK",
+  "detail": "7,004,267 bytes"
+ },
+ {
+  "id": 26,
+  "name": "C_VAR1_28102026_1.DAT",
+  "status": "OK",
+  "detail": "1,114,397 bytes"
+ },
+ {
+  "id": 2,
+  "name": "ael_28102026.csv",
+  "status": "OK",
+  "detail": "11,972 bytes"
+ },
+ {
+  "id": 39,
+  "name": "fo_secban.csv",
+  "status": "OK",
+  "detail": "53 bytes"
+ },
+ {
+  "id": 54,
+  "name": "NSE_FO_contract_28102026.csv",
+  "status": "OK",
+  "detail": "39,500,328 bytes"
+ },
+ {
+  "id": 55,
+  "name": "NSE_FO_spdcontract_28102026.csv",
+  "status": "OK",
+  "detail": "70,207 bytes"
+ },
+ {
+  "id": 53,
+  "name": "NSE_CM_security_28102026.csv",
+  "status": "OK",
+  "detail": "11,467,995 bytes"
+ },
+ {
+  "id": 51,
+  "name": "NSE_CD_contract_28102026.csv",
+  "status": "OK",
+  "detail": "6,637,171 bytes"
+ },
+ {
+  "id": 52,
+  "name": "NSE_CD_spdcontract_28102026.csv",
+  "status": "OK",
+  "detail": "26,344 bytes"
+ },
+ {
+  "id": 36,
+  "name": "F_AEL_OPT_CONTRACTS_28102026.csv",
+  "status": "OK",
+  "detail": "5,969,146 bytes"
+ },
+ {
+  "id": 27,
+  "name": "C_VAR1_SLB_28102026_1.DAT",
+  "status": "OK",
+  "detail": "4,992,777 bytes"
+ },
+ {
+  "id": 31,
+  "name": "EQD_CC_CO281026.csv",
+  "status": "OK",
+  "detail": "41,497,446 bytes"
+ },
+ {
+  "id": 34,
+  "name": "EQ_MAP_CC_281026.csv",
+  "status": "OK",
+  "detail": "3,204,367 bytes"
+ },
+ {
+  "id": 22,
+  "name": "cd_participant.txt",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 21,
+  "name": "cd_contract_stream_info.csv",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 23,
+  "name": "cd_spd_contract_stream_info.csv",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 41,
+  "name": "FreeFloat.txt",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 47,
+  "name": "nnf_participant.dat",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 48,
+  "name": "nnf_security.dat",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 57,
+  "name": "participant.txt",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 25,
+  "name": "cm_contract_stream_info.csv",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 38,
+  "name": "fo_participant.txt",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 1,
+  "name": "2710SPD0000.md",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 3,
+  "name": "ael_NIFTY_Options.csv",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 37,
+  "name": "fo_contract_stream_info.csv",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 40,
+  "name": "fo_spd_contract_stream_info.csv",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 56,
+  "name": "participant_slb.txt",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 60,
+  "name": "security_slb.txt",
+  "status": "NEEDS_URL",
+  "detail": "run `bodfetch.py record`, then put the download URL in manifest.yaml"
+ },
+ {
+  "id": 28,
+  "name": "DailyIndexFile27102026.csv",
+  "status": "OK",
+  "detail": "855 bytes"
+ },
+ {
+  "id": 10,
+  "name": "Bhavcopy_MCX_CO_0_0_0_20261027_F_0000.csv",
+  "status": "OK",
+  "detail": "2,496,124 bytes"
+ },
+ {
+  "id": 42,
+  "name": "MCX_ASSET_MASTER.bcp",
+  "status": "OK",
+  "detail": "2,791 bytes"
+ },
+ {
+  "id": 43,
+  "name": "MCX_ASSET_UNDERLYING_MAP.bcp",
+  "status": "OK",
+  "detail": "13,482 bytes"
+ },
+ {
+  "id": 44,
+  "name": "MCX_PART.bcp",
+  "status": "OK",
+  "detail": "33,718 bytes"
+ },
+ {
+  "id": 46,
+  "name": "MCXScrips.bcp",
+  "status": "OK",
+  "detail": "9,630,937 bytes"
+ },
+ {
+  "id": 45,
+  "name": "MCXRPF-20261028-0503-01-I.spn",
+  "status": "OK",
+  "detail": "6,769,572 bytes"
+ },
+ {
+  "id": 29,
+  "name": "DailyMargin_20261028*.csv",
+  "status": "NEEDS_URL",
+  "detail": "name has a wildcard; record the real download, then set an exact name"
+ }
+]

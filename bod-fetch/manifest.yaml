@@ -39,6 +39,17 @@ settings:
         user_env: MCX_USER                  # ID and password come from .env
         pass_env: MCX_PASSWORD
 
+  push:                                     # `bodfetch.py push`: SFTP straight to the UAT server (no RDP/.73 hop)
+    host: 192.168.1.76
+    port: 22
+    user: greek
+    password_env: UAT_SSH_PASSWORD          # optional, from .env; an SSH key (ssh-copy-id) is preferred
+    # key_file: ~/.ssh/id_ed25519           # optional; keys loaded in ssh-agent are always tried first
+    passphrase_env: UAT_SSH_KEY_PASSPHRASE  # optional, only if key_file is encrypted and not in the agent
+    target_dir: /home/greek/Desktop/contract_test     # TESTING. The live folder is .../contract (needs --live)
+    staging_dir: /home/greek/Desktop/bod_push/staging # <staging>/<date>/ - files land here first
+    backup_dir: /home/greek/Desktop/bod_push/backup   # <backup>/<date>/ - target's previous versions
+
 files:
   # ---------------- BSE, open URLs (20 files from 9 requests) ----------------
   - {id: 7,  grp: bse_open, type: http, name: "BhavCopy_BSE_CD_0_0_0_{P:%Y%m%d}_F_0000.CSV", url: "https://www.bseindia.com/bsedata/CIML_bhavcopy/BhavCopy_BSE_CD_0_0_0_{P:%Y%m%d}_F_0000.CSV"}

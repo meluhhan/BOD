@@ -1,0 +1,324 @@
+{
+ "10": {
+  "fetched_at": "2026-10-28T12:07:21",
+  "name": "Bhavcopy_MCX_CO_0_0_0_20261027_F_0000.csv",
+  "sha256": "e2ee53f6b4bea9cb06e21e1457f225422c6949354712a3fdb6e4d0bcb5815f66",
+  "size": 2496124,
+  "url": "https://sftp.mcxindia.com/Common/Bhavcopy_MCX_CO_0_0_0_20261027_F_0000.csv"
+ },
+ "11": {
+  "fetched_at": "2026-10-28T12:02:05",
+  "name": "BhavCopy_NSE_CD_0_0_0_20261027_F_0000.csv",
+  "sha256": "6cf9e72f63e5f717ebdcd8eb7e29c76dcadf1e434a7da665c0c4974b1fe39c1f",
+  "size": 1952025,
+  "url": "https://nsearchives.nseindia.com/archives/cd/bhav/BhavCopy_NSE_CD_0_0_0_20261027_F_0000.csv.zip"
+ },
+ "12": {
+  "fetched_at": "2026-10-28T12:02:03",
+  "name": "BhavCopy_NSE_CM_0_0_0_20261027_F_0000.csv",
+  "sha256": "5be67e599f3240b2d941c8c6fc464757185e781b801e998908b2dffcd731aad7",
+  "size": 631301,
+  "url": "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_20261027_F_0000.csv.zip"
+ },
+ "13": {
+  "fetched_at": "2026-10-28T12:02:05",
+  "name": "BhavCopy_NSE_FO_0_0_0_20261027_F_0000.csv",
+  "sha256": "68e2749e983c5175ec0e2547d4715de1ec014fc67b06a28f37b4148383670303",
+  "size": 7653440,
+  "url": "https://nsearchives.nseindia.com/content/fo/BhavCopy_NSE_FO_0_0_0_20261027_F_0000.csv.zip"
+ },
+ "14": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "BSE_BFX_CONTRACT_28102026.csv",
+  "sha256": "25e6315e29f3241653ce6214d8561283ef436ba11ce073c4f0d9c7ee7c08b67d",
+  "size": 4814381,
+  "url": "https://www.bseindia.com/downloads1/Master.zip"
+ },
+ "15": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "BSE_BFX_SPDCONTRACT_28102026.csv",
+  "sha256": "b96a0e7f296ba92ca1f4e205d5f2c130602a98393c70bb27d346348d4493d210",
+  "size": 610508,
+  "url": "https://www.bseindia.com/downloads1/Master.zip"
+ },
+ "16": {
+  "fetched_at": "2026-10-28T12:01:33",
+  "name": "BSECDXRISK20261028-00.spn",
+  "sha256": "9a5508c343c10c5ee6b08797d459fad2772743aea099b724c122e2d50237b918",
+  "size": 9540491,
+  "url": "https://www.bseindia.com/bsedata/Risk_Automate/CURRENCY/SPN/BSECDXRISK20261028-00.ZIP"
+ },
+ "17": {
+  "fetched_at": "2026-10-28T12:01:38",
+  "name": "BSE_EQD_CONTRACT_28102026.csv",
+  "sha256": "1dfc6841439f2eef0004bd3e4205dd5e53912704a27b7bf3f79ef50ff0cff2d7",
+  "size": 14080380,
+  "url": "https://www.bseindia.com/downloads/Help/file/CO.zip"
+ },
+ "18": {
+  "fetched_at": "2026-10-28T12:01:38",
+  "name": "BSE_EQD_SPDCONTRACT_28102026.csv",
+  "sha256": "9942866f78a190c2a90a56ba50ace9cf4c6d5a663de37329674c40f7089abbb9",
+  "size": 304199,
+  "url": "https://www.bseindia.com/downloads/Help/file/CO.zip"
+ },
+ "19": {
+  "fetched_at": "2026-10-28T12:01:40",
+  "name": "BSE_EQ_SCRIP_28102026.csv",
+  "sha256": "b135769cd5f8baa482e0837e1e397c469d27f1fff6332f0f5cf1530ae0cf7e92",
+  "size": 4386235,
+  "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
+ },
+ "2": {
+  "fetched_at": "2026-10-28T12:02:09",
+  "name": "ael_28102026.csv",
+  "sha256": "4486b245ebd2af7000f7d4bc3cd2a8f4bc30fa689115c071bb65b4179ecaa598",
+  "size": 11972,
+  "url": "https://nsearchives.nseindia.com/archives/exp_lim/ael_28102026.csv"
+ },
+ "20": {
+  "fetched_at": "2026-10-28T12:01:36",
+  "name": "BSERISK20261028-00.spn",
+  "sha256": "4effb0c898bd2a535ec53c951bd0ff2dc8361697dde3811141af6153ff30c4f7",
+  "size": 56522026,
+  "url": "https://www.bseindia.com/bsedata/Risk_Automate/SPN/BSERISK20261028-00.ZIP"
+ },
+ "24": {
+  "fetched_at": "2026-10-28T12:01:40",
+  "name": "CI281026.txt",
+  "sha256": "4ea5fd284d78ec04757a3dafa2e2fbd5058549e8068cd98166f6c66496d9e9df",
+  "size": 231426,
+  "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
+ },
+ "26": {
+  "fetched_at": "2026-10-28T12:02:09",
+  "name": "C_VAR1_28102026_1.DAT",
+  "sha256": "2da22f70da5a26133351546d42d97207d2c2de412dc489e30094ffeefa4a058c",
+  "size": 1114397,
+  "url": "https://nsearchives.nseindia.com/archives/nsccl/var/C_VAR1_28102026_1.DAT"
+ },
+ "27": {
+  "fetched_at": "2026-10-28T12:02:13",
+  "name": "C_VAR1_SLB_28102026_1.DAT",
+  "sha256": "07c3c74d7cd337a69cc6db32c0aaad1902e9c6a166651ae486f1328da6cd92e4",
+  "size": 4992777,
+  "url": "https://archives.nseindia.com/archives/slbs/var/C_VAR1_SLB_28102026_1.DAT"
+ },
+ "28": {
+  "fetched_at": "2026-10-28T12:07:18",
+  "name": "DailyIndexFile27102026.csv",
+  "sha256": "23f2e041ca9978d30b34e99243b1ec38bb70a02dfdce4d01e393cfeb446ab443",
+  "size": 855,
+  "url": "https://sftp.mcxindia.com/Common/DailyIndexFile27102026.csv"
+ },
+ "30": {
+  "fetched_at": "2026-10-28T12:01:40",
+  "name": "DP281026",
+  "sha256": "77ba417c50bbe9cb0bd185918e01a52a8a7c172fd7f734efa8ffe547cc44286c",
+  "size": 1273829,
+  "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
+ },
+ "31": {
+  "fetched_at": "2026-10-28T12:06:57",
+  "name": "EQD_CC_CO281026.csv",
+  "sha256": "1128b8abe04cc1cccf782de56b156ba574a7915224a638f634d0d382a75cf78d",
+  "size": 41497446,
+  "url": "https://member.bseindia.com/ > FNO > COMMON > Oct-2026 > 27-10-2026 > EQD_CC_CO271026.csv"
+ },
+ "32": {
+  "fetched_at": "2026-10-28T12:01:38",
+  "name": "EQD_DP281026",
+  "sha256": "dcbde22ab5ecaa6f270248544d6e62c0da4dae72fab9d0f5f843f9740fed8191",
+  "size": 2547703,
+  "url": "https://www.bseindia.com/downloads/Help/file/CO.zip"
+ },
+ "33": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "EQD_PARTICIPANT28102026.TXT",
+  "sha256": "754664097f6626bf24c44e7f5bfef096f9e07afa33c5c3fe86b862de091f5cdb",
+  "size": 1051634,
+  "url": "https://www.bseindia.com/downloads/Help/file/CO.zip"
+ },
+ "34": {
+  "fetched_at": "2026-10-28T12:07:17",
+  "name": "EQ_MAP_CC_281026.csv",
+  "sha256": "327e20aeabd8d00c421ad6b3bc8fbea556f047d3f80254fbdb200c5189608b03",
+  "size": 3204367,
+  "url": "https://member.bseindia.com/ > EQ > COMMON > Oct-2026 > 27-10-2026 > EQ_MAP_CC_271026.csv"
+ },
+ "35": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "EQ_PARTICIPANT28102026.TXT",
+  "sha256": "9d753d32ad34aa7ff0f44c7fea95d12cf44b5ad24ec44c71e82292ff356110c1",
+  "size": 2331293,
+  "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
+ },
+ "36": {
+  "fetched_at": "2026-10-28T12:02:11",
+  "name": "F_AEL_OPT_CONTRACTS_28102026.csv",
+  "sha256": "a585e527230dbee265e132e9f74465a472893d2451959ea828e1fb1d379c1566",
+  "size": 5969146,
+  "url": "https://nsearchives.nseindia.com/content/fo/F_AEL_OPT_CONTRACTS_28102026.csv.gz"
+ },
+ "39": {
+  "fetched_at": "2026-10-28T12:02:09",
+  "name": "fo_secban.csv",
+  "sha256": "8af926d9d336ee025f59e12224987119104b1d2b3be72a8655263a6f66736662",
+  "size": 53,
+  "url": "https://nsearchives.nseindia.com/content/fo/fo_secban.csv"
+ },
+ "4": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "BFX_CC_CO281026.csv",
+  "sha256": "c896d2c8b53ce5eb2e3b1bb30b9b552f3fca233d8cfa9207eb96c79551039b36",
+  "size": 5858251,
+  "url": "https://www.bseindia.com/downloads1/Master.zip"
+ },
+ "42": {
+  "fetched_at": "2026-10-28T12:07:21",
+  "name": "MCX_ASSET_MASTER.bcp",
+  "sha256": "38aa89099099e881382f0cb26a049ad070eacb5994e358c5df700a14829f82c1",
+  "size": 2791,
+  "url": "https://sftp.mcxindia.com/Common/Contract Master/CTCLContractMaster/MCX_ASSET_MASTER.bcp"
+ },
+ "43": {
+  "fetched_at": "2026-10-28T12:07:22",
+  "name": "MCX_ASSET_UNDERLYING_MAP.bcp",
+  "sha256": "ae209513a1e076d56275bc6ca8d662438a7547a63758a558e6a3eb813c45434b",
+  "size": 13482,
+  "url": "https://sftp.mcxindia.com/Common/Contract Master/CTCLContractMaster/MCX_ASSET_UNDERLYING_MAP.bcp"
+ },
+ "44": {
+  "fetched_at": "2026-10-28T12:07:22",
+  "name": "MCX_PART.bcp",
+  "sha256": "2e0298248cf90b5ffe74d8f38f1e68e15e6abb3a0acc8dde442dcb7c37d0c824",
+  "size": 33718,
+  "url": "https://sftp.mcxindia.com/Common/Contract Master/CTCLContractMaster/MCX_PART.bcp"
+ },
+ "45": {
+  "fetched_at": "2026-10-28T12:07:30",
+  "name": "MCXRPF-20261028-0503-01-I.spn",
+  "sha256": "54c3b58519581a1c3b7636e8619d46c8fe994d30a53f8620c844399565f0b068",
+  "size": 6769572,
+  "url": "https://sftp.mcxindia.com/Common/RPFFile/MCXRPF-20261028-0503-01-I.spn"
+ },
+ "46": {
+  "fetched_at": "2026-10-28T12:07:27",
+  "name": "MCXScrips.bcp",
+  "sha256": "e49be2a35369b860235f2154759b13d977956e5ca7c7373b3832d8f0a796dfe6",
+  "size": 9630937,
+  "url": "https://sftp.mcxindia.com/Common/Contract Master/CTCLContractMaster/MCXScrips.bcp"
+ },
+ "49": {
+  "fetched_at": "2026-10-28T12:02:08",
+  "name": "nsccl.20261028.i01.spn",
+  "sha256": "538278a220dcd95391589d732ae263bcc2589938539b5c6535e7e4667f08d4cc",
+  "size": 51807117,
+  "url": "https://nsearchives.nseindia.com/archives/nsccl/span/nsccl.20261028.i1.zip"
+ },
+ "5": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "BFX_DP281026",
+  "sha256": "2ed3458518c9caf0059053f87d36824b5afda74c883f8fbeac573c651f3c70b1",
+  "size": 1073556,
+  "url": "https://www.bseindia.com/downloads1/Master.zip"
+ },
+ "50": {
+  "fetched_at": "2026-10-28T12:02:08",
+  "name": "nsccl_x.20261028.i01.spn",
+  "sha256": "f7a45f1acbf016e9a492703b759815ef99c9179f8bd43de0390919b7594f1bd4",
+  "size": 7004267,
+  "url": "https://nsearchives.nseindia.com/archives/cd/span/nsccl_x.20261028.i1.zip"
+ },
+ "51": {
+  "fetched_at": "2026-10-28T12:02:11",
+  "name": "NSE_CD_contract_28102026.csv",
+  "sha256": "2e44f411828b45d5448c1a5252c25ea76163c6c5596c2ac942c3ee63fbf66d71",
+  "size": 6637171,
+  "url": "https://nsearchives.nseindia.com/content/cd/NSE_CD_contract_27102026.csv.gz"
+ },
+ "52": {
+  "fetched_at": "2026-10-28T12:02:11",
+  "name": "NSE_CD_spdcontract_28102026.csv",
+  "sha256": "9cf8438cde8d84c19cfd0cb8cca1abf3cbb88501416fd7acf28f50dcdb26bc29",
+  "size": 26344,
+  "url": "https://nsearchives.nseindia.com/content/cd/NSE_CD_spdcontract_27102026.csv.gz"
+ },
+ "53": {
+  "fetched_at": "2026-10-28T12:02:10",
+  "name": "NSE_CM_security_28102026.csv",
+  "sha256": "786c96c9309327b08083437373c9ae8a7903cfc5d7522afa66daaa89a0d31ffe",
+  "size": 11467995,
+  "url": "https://nsearchives.nseindia.com/content/cm/NSE_CM_security_27102026.csv.gz"
+ },
+ "54": {
+  "fetched_at": "2026-10-28T12:02:10",
+  "name": "NSE_FO_contract_28102026.csv",
+  "sha256": "e7527dbe2af68bffa523eebe511ececcc02f150efd27712bd4738332231652e2",
+  "size": 39500328,
+  "url": "https://nsearchives.nseindia.com/content/fo/NSE_FO_contract_27102026.csv.gz"
+ },
+ "55": {
+  "fetched_at": "2026-10-28T12:02:10",
+  "name": "NSE_FO_spdcontract_28102026.csv",
+  "sha256": "e3f207fdfc9fe6c6b4741dbe4b43da175a3934b010920a90458b9303a9d2ccfa",
+  "size": 70207,
+  "url": "https://nsearchives.nseindia.com/content/fo/NSE_FO_spdcontract_27102026.csv.gz"
+ },
+ "58": {
+  "fetched_at": "2026-10-28T12:02:02",
+  "name": "Pd271026.csv",
+  "sha256": "01168b4a92a9841097679034b957e8604893b055a688a59ab8922bd13d875504",
+  "size": 669371,
+  "url": "https://archives.nseindia.com/archives/equities/bhavcopy/pr/PR271026.zip"
+ },
+ "59": {
+  "fetched_at": "2026-10-28T12:01:40",
+  "name": "REG_IND281026.csv",
+  "sha256": "20822d14bff2dc8b6f7876fbf988b1de1e5a8f7d5d85a025731b305ca4ebe716",
+  "size": 565283,
+  "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
+ },
+ "6": {
+  "fetched_at": "2026-10-28T12:02:01",
+  "name": "BFX_PARTICIPANT28102026.TXT",
+  "sha256": "77567abf939211ede96b98de077610f5c577c92018cf6ea8aab0845538d98a24",
+  "size": 48031,
+  "url": "https://www.bseindia.com/downloads1/Master.zip"
+ },
+ "61": {
+  "fetched_at": "2026-10-28T12:02:02",
+  "name": "series_change.csv",
+  "sha256": "4b5b65c7f53df9df7466596a3a566314975994d2a2d150f9cd506525bbe202fb",
+  "size": 67,
+  "url": "https://archives.nseindia.com/content/equities/series_change.csv"
+ },
+ "62": {
+  "fetched_at": "2026-10-28T12:01:09",
+  "name": "VAR281026.xls",
+  "sha256": "ffa14bb1d09ec2576bc9a3e423b2365d93ffc9b30bdbdb16034176ad05ea4289",
+  "size": 3132928,
+  "url": "https://www.bseindia.com/BSEDATA/margins/VAR271026.zip"
+ },
+ "7": {
+  "fetched_at": "2026-10-28T12:01:07",
+  "name": "BhavCopy_BSE_CD_0_0_0_20261027_F_0000.CSV",
+  "sha256": "98b01bd65b82ae435d567fe7b8c8a85fdbb825c7c5846ae242d3008814d990a2",
+  "size": 311,
+  "url": "https://www.bseindia.com/bsedata/CIML_bhavcopy/BhavCopy_BSE_CD_0_0_0_20261027_F_0000.CSV"
+ },
+ "8": {
+  "fetched_at": "2026-10-28T12:01:08",
+  "name": "BhavCopy_BSE_CM_0_0_0_20261027_F_0000.CSV",
+  "sha256": "d60f7eaf036aa36a096b1867a2688489221f74364a09248fd8532359940d845d",
+  "size": 856277,
+  "url": "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_0_0_20261027_F_0000.CSV"
+ },
+ "9": {
+  "fetched_at": "2026-10-28T12:01:08",
+  "name": "BhavCopy_BSE_FO_0_0_0_20261027_F_0000.CSV",
+  "sha256": "7b870df1b10be95cb4681a90460cd1e79275e7c2ff4395aa64328bea852736d6",
+  "size": 167176,
+  "url": "https://www.bseindia.com/download/Bhavcopy/Derivative/BhavCopy_BSE_FO_0_0_0_20261027_F_0000.CSV"
+ }
+}

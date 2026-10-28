@@ -9,6 +9,7 @@
     python bodfetch.py fetch --watch --interval 20 --until 07:00
     python bodfetch.py record            # human browses/downloads; we log the URLs to put in manifest.yaml
     python bodfetch.py login mcx         # test the MCX login from .env (plain HTTP, no browser)
+    python bodfetch.py push --dry-run    # copy the day's files to the UAT server (see bodpush.py)
 
 Design rules
   * manifest.yaml is the single source of truth: one row per file, nothing hard-coded here.
@@ -775,6 +776,68 @@ def cmd_login(args):
     return 0
 
 
+def cmd_push(args):
+    """Copy the day's fetched files to the UAT server (or a local folder with --local). See bodpush.py."""
+    import bodpush as bp
+    cfg, s, base, cal = load(pathlib.Path(args.manifest))
+    load_env(base / ".env")
+    T, P = bod_dates(args, cal, s)
+    out = expand(s.get("staging_dir", "staging"), base) / f"{T:%Y-%m-%d}"
+    entries = choose_entries(cfg, args.only)
+    items, missing = bp.collect(out, entries, lambda e: render(e["name"], T, P))
+    ps = s.get("push", {})
+    target = args.target or ps.get("target_dir")
+    if not target:
+        raise SystemExit("set settings.push.target_dir in manifest.yaml (or pass --target)")
+    staging_root, backup_root = ps.get("staging_dir"), ps.get("backup_dir")
+    if args.local:  # same flow into a local folder: <local>/<target name>, <local>/staging, <local>/backup
+        root = pathlib.Path(args.local).expanduser().resolve()
+        target = str(root / pathlib.PurePosixPath(target).name)
+        staging_root, backup_root = str(root / "staging"), str(root / "backup")
+    where = f"local folder {target}" if args.local else f"{ps.get('user')}@{ps.get('host')}:{target}"
+    print(f"BOD date {T:%a %d-%b-%Y} | {len(items)} file(s) ready in {out} | -> {where}")
+    if missing:
+        print(f"{len(missing)} selected file(s) not fetched (or changed since fetch):")
+        for key, name in missing:
+            print(f"   {key:>4}  {name}")
+        if not args.allow_partial:
+            print("Nothing pushed. Fetch them first, or pass --allow-partial to push only what is ready.")
+            return 2
+    if not items:
+        print("No files to push.")
+        return 2
+    try:
+        bp.check_target(target, args.live)
+        remote = bp.LocalRemote() if args.local else bp.SshRemote(
+            ps["host"], ps.get("user", "greek"), int(ps.get("port", 22)),
+            password=os.environ.get(ps.get("password_env", ""), "") or None, key_file=ps.get("key_file"),
+            passphrase=os.environ.get(ps.get("passphrase_env", ""), "") or None)
+    except bp.PushError as ex:
+        print(f"ERROR: {ex}")
+        return 1
+    try:
+        paths = bp.day_paths(target, staging_root, backup_root, T)
+        bp.plan(items, remote, paths)
+        counts = {a: sum(it.action == a for it in items) for a in ("NEW", "REPLACE", "SAME")}
+        for it in items:
+            print(f"  {it.action:<8} {it.name}")
+        print("PLAN: " + ", ".join(f"{k}={v}" for k, v in counts.items()))
+        if args.dry_run:
+            print("Dry run: nothing written.")
+            return 0
+        report = bp.push(items, remote, paths)
+        report.update(date=T.isoformat(), missing=[n for _, n in missing], dry_run=False)
+        log = out / f"push-{dt.datetime.now():%H%M%S}.json"
+        log.write_text(json.dumps(report, indent=1))
+        print(f"RESULT: {report['result']}  (log: {log})")
+        return 0
+    except bp.PushError as ex:
+        print(f"ERROR: {ex}")
+        return 1
+    finally:
+        remote.close()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--manifest", default=str(HERE / "manifest.yaml"))
@@ -792,6 +855,15 @@ def main():
             p.add_argument("--force", action="store_true", help="re-download even if already fetched")
         if name == "record":
             p.add_argument("--seconds", type=int, help="stop recording after N seconds (default: Enter / Ctrl+C)")
+    p = sub.add_parser("push", help="copy the day's files to the UAT server: stage, verify, back up, swap")
+    p.add_argument("--date", help="BOD date YYYY-MM-DD (default: next trading day after the cutoff)")
+    p.add_argument("--only", default="sheet", help="ids/groups to push (default: sheet = the 62 Servers List rows)")
+    p.add_argument("--dry-run", action="store_true", help="show what would change; write nothing")
+    p.add_argument("--allow-partial", action="store_true", help="push what is ready even if some files are missing")
+    p.add_argument("--target", help="override settings.push.target_dir")
+    p.add_argument("--local", metavar="DIR", help="push into a local folder instead of the server (testing)")
+    p.add_argument("--live", action="store_true", help="allow writing into Greeksoft's live 'contract' folder")
+    p.set_defaults(fn=cmd_push)
     p = sub.add_parser("login", help="test a portal login from .env (MCX)")
     p.add_argument("portal", help="portal name under settings.session.portals, e.g. mcx")
     p.set_defaults(fn=cmd_login)
