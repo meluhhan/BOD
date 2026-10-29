@@ -276,6 +276,12 @@ keeps it alive and prompts for re-login if the probe fails.
   Lock file `<staging>/.push.lock`. Target `settings.push.target_dir` = `/home/greek/Desktop/contract_test`; a target
   named `contract` needs `--live`. `Remote` protocol with `SshRemote` and `LocalRemote` (tests, `--local`).
   Tests: `tests/test_push.py`. Auth: ssh-agent keys, else key_file+passphrase / password from .env.
+* **Allvest parity fixes (29-Oct, from colleague's bod-start branch, re-implemented on main; VERIFIED same sha256):**
+  `REG_IND<T>.csv` = BSE's 63-column `REG1_IND<P>.csv` from the public grid (EQ > COMMON > P), not scrip.zip's
+  29-column REG_IND; `C_VAR1` saved with CRLF (`crlf: true`); naming rule `settings.keep_p_date` + `name_rule()`:
+  every saved name carries T (a P date in the name becomes T) except bhavcopies, `Pd<P>.csv`, `<P>SPD0000.md` -
+  only DailyIndexFile changes in practice. Not taken: bod-start's `bodstart.py` (fake-app only) and `bodcheck.py`.
+  bodcheck flagged `EQD_CC_CO<T>` (from the P grid folder) still listing P-day expiries - check against the team's copy.
 * `BhavCopy_BSE_CD_..._20261026` from BSE is 311 bytes (header only) - probably no BSE currency trades; check vs UAT.
 * `--only sheet` = the 62 numbered rows. Root-level duplicate copies of the code were removed; this folder is the project.
 

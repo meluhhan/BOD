@@ -31,11 +31,38 @@ T, P = dt.date(2026, 10, 27), dt.date(2026, 10, 26)
 def test_plan_matches_uat_folder():
     cfg = yaml.safe_load((ROOT / "manifest.yaml").read_text())
     uat = set((pathlib.Path(__file__).parent / "uat_listing_2026-10-27.txt").read_text().split())
-    mine = {b.render(e["name"], T, P) for e in cfg["files"] if e.get("grp") not in ("mcx", "slbm")}
+    keep = cfg["settings"]["keep_p_date"]
+    mine = {b.name_rule(b.render(e["name"], T, P), T, P, keep) for e in cfg["files"] if e.get("grp") not in ("mcx", "slbm")}
     assert mine == uat, (sorted(uat - mine), sorted(mine - uat))
     ids = {e["id"] for e in cfg["files"] if isinstance(e["id"], int)}
     assert ids == set(range(1, 63)), "every Sr.No. 1..62 from the sheet must be in the manifest"
     assert {e["id"] for e in b.choose_entries(cfg, "sheet")} == ids  # --only sheet = exactly the 62 rows
+
+
+def test_name_rule():
+    keep = yaml.safe_load((ROOT / "manifest.yaml").read_text())["settings"]["keep_p_date"]
+    rule = lambda n: b.name_rule(n, T, P, keep)
+    assert rule("DailyIndexFile26102026.csv") == "DailyIndexFile27102026.csv"   # P -> T
+    assert rule("EQD_CC_CO261026.csv") == "EQD_CC_CO271026.csv"                 # ddmmyy too
+    assert rule("BSERISK20261026-00.spn") == "BSERISK20261027-00.spn"           # yyyymmdd too
+    assert rule("NSE_FO_contract_27102026.csv") == "NSE_FO_contract_27102026.csv"  # already T
+    assert rule("series_change.csv") == "series_change.csv"                     # no date
+    for kept in ("BhavCopy_NSE_CM_0_0_0_20261026_F_0000.csv", "Bhavcopy_MCX_CO_0_0_0_20261026_F_0000.csv",
+                 "Pd261026.csv", "2610SPD0000.md"):
+        assert rule(kept) == kept                                               # the three exceptions keep P
+    assert b.name_rule("X_26102026.csv", T, P, None) == "X_26102026.csv"        # rule off without settings
+
+
+def test_crlf():
+    srv, U = _server()
+    tmp = pathlib.Path(tempfile.mkdtemp())
+    try:
+        r = b.Run({}, T, P, tmp / "o")
+        assert r.fetch({"id": 1, "name": "v.dat", "type": "http", "url": U + "/ok.csv", "crlf": True})[0] == "OK"
+        assert (tmp / "o" / "v.dat").read_bytes() == b"a,b\r\n1,2\r\n"
+    finally:
+        srv.shutdown()
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def test_holiday_calendar():
@@ -165,6 +192,7 @@ def test_browser_session():
 
 
 if __name__ == "__main__":
-    for fn in (test_plan_matches_uat_folder, test_holiday_calendar, test_local_server, test_browser_session):
+    for fn in (test_plan_matches_uat_folder, test_name_rule, test_crlf, test_holiday_calendar, test_local_server,
+               test_browser_session):
         fn()
         print("PASS", fn.__name__)

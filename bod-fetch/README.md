@@ -108,6 +108,8 @@ the evening they are generated (P), but the content is for T. Checked 27-Oct-202
 `BSE_EQD_CONTRACT_26102026` and `NSE_FO_contract_26102026` hold contracts starting 27-Oct. Those rows
 fetch exactly the P-named file and save it under the T name UAT uses (`member:` / P-dated `url`).
 They take exactly P, never "T or P": in the evening the T-named file already exists and is for the NEXT day.
+Naming rule (Allvest): every saved file carries T in its name - a P date in a name becomes T, except bhavcopies,
+`Pd<P>.csv` and `<P>SPD0000.md` (`settings.keep_p_date`).
 
 ## Statuses
 

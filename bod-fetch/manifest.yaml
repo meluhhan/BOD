@@ -18,12 +18,19 @@
 #   bsegrid  BSE member site's public file grid (no login): `dir` = folder names, `member` = file
 #   manual   source not known yet (reported, never silently skipped)
 # optional: true   -> a 404 is fine (e.g. fo_secban.csv, sheet says "Not Found")
+# crlf: true      -> save with Windows line endings (UAT's C_VAR1 has them; NSE serves LF)
 # grp is only for `--only` filtering.
 
 settings:
   staging_dir: downloads        # relative to this file -> bod-fetch/downloads/<YYYY-MM-DD>/
   holidays_file: holidays.txt
   cutoff: "15:30"            # runs after this time target the NEXT trading day
+  # Naming rule (Allvest, 28-Oct): every saved file carries T in its name. On every fetch a P date in the name
+  # (ddmmyyyy / yyyymmdd / ddmmyy) is replaced by T - except names matching one of these (they keep P):
+  keep_p_date:
+    - '(?i)^bhavcopy_'        # all bhavcopies (BSE, NSE, MCX)
+    - '^Pd\d{6}\.csv$'        # Pd<P>.csv
+    - 'SPD0000\.md$'          # <ddmm of P>SPD0000.md
   session:
     login_urls:                             # one tab each; the human logs in to all of them
       - "https://www.nseindia.com"          # TODO: the NSE member/extranet login page you use
@@ -68,7 +75,8 @@ files:
   - {id: 19, grp: bse_open, type: zip, name: "BSE_EQ_SCRIP_{T:%d%m%Y}.csv", member: "BSE_EQ_SCRIP_{P:%d%m%Y}.csv", url: &scrip_zip "https://www.bseindia.com/downloads/Help/file/scrip.zip"}
   - {id: 24, grp: bse_open, type: zip, name: "CI{T:%d%m%y}.txt", member: "CI{P:%d%m%y}.txt",             url: *scrip_zip}
   - {id: 30, grp: bse_open, type: zip, name: "DP{T:%d%m%y}",                 url: *scrip_zip}
-  - {id: 59, grp: bse_open, type: zip, name: "REG_IND{T:%d%m%y}.csv", member: "REG_IND{P:%d%m%y}.csv",        url: *scrip_zip}
+  - {id: 59, grp: bse_open, type: bsegrid, dir: [EQ, COMMON, "{P:%b-%Y}", "{P:%d-%m-%Y}"], name: "REG_IND{T:%d%m%y}.csv", member: "REG1_IND{P:%d%m%y}.csv",
+     note: "UAT's REG_IND is BSE's 63-column REG1_IND (byte-identical, checked 28-Oct); scrip.zip's REG_IND has only 29 columns"}
   # Participant / CC files: the sheet says member.bseindia.com, but they are in the public zips too.
   - {id: 4,  grp: bse_open, type: zip, name: "BFX_CC_CO{T:%d%m%y}.csv", member: "BFX_CC_CO{P:%d%m%y}.csv",       url: "https://www.bseindia.com/downloads1/Master.zip"}
   - {id: 6,  grp: bse_open, type: zip, name: "BFX_PARTICIPANT{T:%d%m%Y}.TXT", member: "BFX_PARTICIPANT{P:%d%m%Y}.TXT", url: "https://www.bseindia.com/downloads1/Master.zip"}
@@ -88,7 +96,7 @@ files:
   - {id: 11, grp: nse_public, type: zip,  name: "BhavCopy_NSE_CD_0_0_0_{P:%Y%m%d}_F_0000.csv", url: "https://nsearchives.nseindia.com/archives/cd/bhav/BhavCopy_NSE_CD_0_0_0_{P:%Y%m%d}_F_0000.csv.zip"}
   - {id: 49, grp: nse_public, type: zip,  name: "nsccl.{T:%Y%m%d}.i01.spn",   url: "https://nsearchives.nseindia.com/archives/nsccl/span/nsccl.{T:%Y%m%d}.i1.zip"}
   - {id: 50, grp: nse_public, type: zip,  name: "nsccl_x.{T:%Y%m%d}.i01.spn", url: "https://nsearchives.nseindia.com/archives/cd/span/nsccl_x.{T:%Y%m%d}.i1.zip"}
-  - {id: 26, grp: nse_public, type: http, name: "C_VAR1_{T:%d%m%Y}_1.DAT",    url: "https://nsearchives.nseindia.com/archives/nsccl/var/C_VAR1_{T:%d%m%Y}_1.DAT"}
+  - {id: 26, grp: nse_public, type: http, name: "C_VAR1_{T:%d%m%Y}_1.DAT",    url: "https://nsearchives.nseindia.com/archives/nsccl/var/C_VAR1_{T:%d%m%Y}_1.DAT", crlf: true}
   - {id: 2,  grp: nse_public, type: http, name: "ael_{T:%d%m%Y}.csv",         url: "https://nsearchives.nseindia.com/archives/exp_lim/ael_{T:%d%m%Y}.csv"}
   - {id: 39, grp: nse_public, type: http, name: "fo_secban.csv",              url: "https://nsearchives.nseindia.com/content/fo/fo_secban.csv", note: "undated file"}
   # NSE contract/security masters: published as .csv.gz the evening before, named with THAT day (P), but the
@@ -127,7 +135,7 @@ files:
   - {id: 60, grp: slbm, type: session, path: "/SLBCOMMON/NTNEAT", name: "security_slb.txt"}
 
   # ---------------- MCX (in the sheet, not in the 53-file UAT Annexure) ----------------
-  - {id: 28, grp: mcx, type: servu, portal: mcx, dir: "/Common", name: "DailyIndexFile{P:%d%m%Y}.csv"}
+  - {id: 28, grp: mcx, type: servu, portal: mcx, dir: "/Common", name: "DailyIndexFile{P:%d%m%Y}.csv", note: "saved as DailyIndexFile<T>.csv by the naming rule"}
   - {id: 10, grp: mcx, type: servu, portal: mcx, dir: "/Common", name: "Bhavcopy_MCX_CO_0_0_0_{P:%Y%m%d}_F_0000.csv", note: "also under /Common/Bhavcopy/<FY>/<Month>; the copy in /Common is the same name"}
   - {id: 42, grp: mcx, type: servu, portal: mcx, dir: "/Common/Contract Master/CTCLContractMaster", name: "MCX_ASSET_MASTER.bcp", min_modified: T}
   - {id: 43, grp: mcx, type: servu, portal: mcx, dir: "/Common/Contract Master/CTCLContractMaster", name: "MCX_ASSET_UNDERLYING_MAP.bcp", min_modified: T}
