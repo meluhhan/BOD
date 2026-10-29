@@ -169,6 +169,16 @@ def render(template: str, T: dt.date, P: dt.date, D: dt.date | None = None) -> s
     return template.format(T=T, P=P, D=D or T)
 
 
+def name_rule(name: str, T: dt.date, P: dt.date, keep_p_date: list[str] | None) -> str:
+    """Allvest naming rule: a saved file carries T in its name, so a P date in it (ddmmyyyy, yyyymmdd, ddmmyy)
+    becomes T - except names matching a `keep_p_date` regex (bhavcopies, Pd, SPD). None = rule off."""
+    if keep_p_date is None or any(re.search(k, name) for k in keep_p_date):
+        return name
+    for fmt in ("%d%m%Y", "%Y%m%d", "%d%m%y"):
+        name = re.sub(rf"(?<!\d){P:{fmt}}(?!\d)", f"{T:{fmt}}", name)
+    return name
+
+
 def looks_html(data: bytes) -> bool:
     head = data[:512].lstrip().lower()
     return head.startswith((b"<!doctype html", b"<html", b"<head", b"<?xml version")) and b"<html" in data[:2048].lower()
@@ -563,6 +573,9 @@ class Run:
             problem = self.validate(data, e, name)
             if problem:
                 raise Skip("FAILED", problem)
+            if e.get("crlf"):  # UAT's copy has Windows line endings
+                data = re.sub(rb"(?<!\r)\n", b"\r\n", data)
+            name = name_rule(name, T, P, self.cfg.get("settings", {}).get("keep_p_date"))
 
             dest = self.dir / name
             tmp = dest.with_name(dest.name + ".part")
@@ -646,7 +659,8 @@ def cmd_plan(args):
         print("WARNING: no holidays known - only weekends are treated as non-trading days.")
     for e in choose_entries(cfg, args.only):
         alt = f"  (or {render(e['name'], T, P, P)})" if "P" in e.get("member_dates", []) else ""
-        print(f"{str(e['id']):>4}  {e.get('grp', ''):<11} {e.get('type', 'http'):<8} {render(e['name'], T, P)}{alt}")
+        name = name_rule(render(e["name"], T, P), T, P, s.get("keep_p_date"))
+        print(f"{str(e['id']):>4}  {e.get('grp', ''):<11} {e.get('type', 'http'):<8} {name}{alt}")
 
 
 def cmd_fetch(args):

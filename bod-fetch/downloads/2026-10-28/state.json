@@ -91,10 +91,10 @@
   "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
  },
  "26": {
-  "fetched_at": "2026-10-28T12:02:09",
+  "fetched_at": "2026-10-28T17:06:51",
   "name": "C_VAR1_28102026_1.DAT",
-  "sha256": "2da22f70da5a26133351546d42d97207d2c2de412dc489e30094ffeefa4a058c",
-  "size": 1114397,
+  "sha256": "757a0fc3e1188ff80fb46426d8093eb8b1e64ddc5752bfa9c72e8e1d3e2b0ce0",
+  "size": 1133259,
   "url": "https://nsearchives.nseindia.com/archives/nsccl/var/C_VAR1_28102026_1.DAT"
  },
  "27": {
@@ -106,7 +106,7 @@
  },
  "28": {
   "fetched_at": "2026-10-28T12:07:18",
-  "name": "DailyIndexFile27102026.csv",
+  "name": "DailyIndexFile28102026.csv",
   "sha256": "23f2e041ca9978d30b34e99243b1ec38bb70a02dfdce4d01e393cfeb446ab443",
   "size": 855,
   "url": "https://sftp.mcxindia.com/Common/DailyIndexFile27102026.csv"
@@ -273,11 +273,11 @@
   "url": "https://archives.nseindia.com/archives/equities/bhavcopy/pr/PR271026.zip"
  },
  "59": {
-  "fetched_at": "2026-10-28T12:01:40",
+  "fetched_at": "2026-10-28T17:06:51",
   "name": "REG_IND281026.csv",
-  "sha256": "20822d14bff2dc8b6f7876fbf988b1de1e5a8f7d5d85a025731b305ca4ebe716",
-  "size": 565283,
-  "url": "https://www.bseindia.com/downloads/Help/file/scrip.zip"
+  "sha256": "340d52409d7e5b2dfa0bcf38245173630aca592bf0b6c5863c63b828573e69c2",
+  "size": 1152939,
+  "url": "https://member.bseindia.com/ > EQ > COMMON > Oct-2026 > 27-10-2026 > REG1_IND271026.csv"
  },
  "6": {
   "fetched_at": "2026-10-28T12:02:01",
