@@ -1,0 +1,40 @@
+# apps.yaml - the 15 Greeksoft apps bodstart.py starts, in order. Seeded from /home/greek/Desktop/AUTO/BOD_F
+# as seen on 27-Oct (CLAUDE.md 3.2). Replaces BOD_F's fixed sleeps with "wait until ready".
+#
+# group:
+#   serial    started one at a time, in this order; the next starts only when this one is READY.
+#             If one fails, the apps after it are NOT started (they depend on it).
+#   parallel  started together (stagger seconds apart) once every serial app is READY.
+# ready (how we know the app is up):
+#   output: <regex>   this text appeared in the app's terminal output
+#   after: <seconds>  the app is still running this many seconds after start (used where no signal is known yet)
+# timeout: seconds to wait for ready before the app counts as TIMEOUT.
+#
+# ASSUMPTIONS until we read the real BOD_F, startapp and the app logs on .76:
+#   * the "Enter Your Selection" prompt means ready (the procedure doc says "option menu appears")
+#   * SMM's "~2 minutes" and the parallel apps' "after:" values are placeholders taken from BOD_F's sleeps
+#   * the two NSEInteractive_TM / ETIInteractive / FixBroadcast_CAS tabs are started the same way
+
+settings:
+  workdir: /home/greek/Desktop/AUG_2026/GETSManager_7.0.120925_CAS_RH8_280826
+  start_cmd: "./startapp {args}"
+  stagger: 5            # seconds between parallel starts (BOD_F spaces them 5-10 s)
+  default_timeout: 300
+
+apps:
+  - {id: M,    group: serial,   args: CTCLManager,             ready: {output: "Enter Your Selection"}}
+  - {id: S,    group: serial,   args: SMM,                     ready: {after: 120}, note: "procedure doc: wait ~2 minutes"}
+  - {id: C,    group: serial,   args: ClientCommunicator,      ready: {output: "Enter Your Selection"}}
+  - {id: R,    group: serial,   args: RMS,                     ready: {output: "Enter Your Selection"}, note: "procedure doc: '0-9 sequence created' - exact text unknown"}
+  - {id: G,    group: serial,   args: GATS,                    ready: {output: "Enter Your Selection"}}
+
+  - {id: N1,   group: parallel, args: NSEInteractive_TM,       ready: {after: 15}}
+  - {id: N2,   group: parallel, args: NSEInteractive_TM,       ready: {after: 15}, note: "how tab 2 differs from tab 1: confirm from BOD_F"}
+  - {id: ETI1, group: parallel, args: ETIInteractive,          ready: {after: 15}}
+  - {id: ETI2, group: parallel, args: ETIInteractive,          ready: {after: 15}}
+  - {id: F1,   group: parallel, args: FixBroadcast_CAS,        ready: {after: 15}}
+  - {id: F2,   group: parallel, args: FixBroadcast_CAS,        ready: {after: 15}}
+  - {id: B1,   group: parallel, args: NSEBroadCast_CAS,        ready: {after: 15}}
+  - {id: B2,   group: parallel, args: NSEBroadCast,            ready: {after: 15}}
+  - {id: MC,   group: parallel, args: MarginCalculator,        ready: {after: 15}}
+  - {id: ACM,  group: parallel, args: AdvanceChartManager_CAS, ready: {after: 15}}

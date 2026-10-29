@@ -1,0 +1,51 @@
+# checks.yaml - what bodcheck.py looks for INSIDE each fetched file. First rule whose `match` (regex on the
+# saved file name) fits wins. T = BOD date (the downloads/<date> folder), P = previous trading day.
+#
+# Every file, always:     not empty; row count vs the previous fetched day (WARN if it changed more than
+#                         max_change, default 0.5 = 50%); first line equal to the previous day's (header: false
+#                         turns that off for files whose first line is data or carries a date).
+# Per rule:
+#   head_date: {re, fmt, is}       a date found by `re` (group 1) in the first 5 lines must be `is` (T, P or [P, T])
+#   col_date:  {col, fmt, is}      every row's value in column `col` (name, or 0-based index) must be `is`
+#   expiry:    {col, fmt}          no contract in the file expires before T (0 / -1 / blank = no expiry, ignored)
+#   tail:      <text>              the file must end with this (catches cut-off downloads)
+#   magic:     <hex>               the file must start with these bytes
+#   min_rows:  N                   fewer data lines than this = FAIL
+# fmt: a strptime format, or nse1980 = NSE's "seconds since 01-Jan-1980".
+
+defaults:
+  max_change: 0.5
+
+rules:
+  # ---- bhavcopies: made the evening before, every row is for P
+  - {match: '^BhavCopy_BSE_CD_',   col_date: {col: TradDt, fmt: '%Y-%m-%d', is: P}, min_rows: 0, max_change: 999,
+     note: "BSE currency bhavcopy is often header-only (no trades)"}
+  - {match: '^(?i:bhavcopy)_',     col_date: {col: TradDt, fmt: '%Y-%m-%d', is: P}, min_rows: 100}
+  - {match: '^DailyIndexFile',     col_date: {col: Index Date, fmt: '%d%m%Y', is: P}}
+  - {match: '^Pd\d{6}\.csv$',      min_rows: 100}
+
+  # ---- dated headers
+  - {match: '^C_VAR1',             head_date: {re: '^10,(\d{8}),', fmt: '%d%m%Y', is: T}, header: false, min_rows: 100}
+  - {match: '^ael_\d',             head_date: {re: 'Trade Date (\d{2}-\w{3}-\d{4})', fmt: '%d-%b-%Y', is: T}, header: false}
+  - {match: '^fo_secban\.csv$',    head_date: {re: 'Trade Date (\d{2}-\w{3}-\d{4})', fmt: '%d-%b-%Y', is: T}, header: false, min_rows: 0, max_change: 999}
+  - {match: '_PARTICIPANT\d+\.TXT$', head_date: {re: '^BSE\w*\|[\d.]+\|(\d{2}-\d{2}-\d{4})', fmt: '%d-%m-%Y', is: P}, header: false}
+  - {match: '^CI\d{6}\.txt$',      head_date: {re: '^(\d{2}/\d{2}/\d{4})', fmt: '%d/%m/%Y', is: P}, header: false}
+
+  # ---- SPAN risk files (XML): created the evening before or early on T, and complete
+  - {match: '\.spn$',              head_date: {re: '<created>(\d{8})', fmt: '%Y%m%d', is: [P, T]}, tail: '</spanFile>', header: false}
+
+  # ---- contract masters: nothing already expired
+  - {match: '^NSE_(FO|CD)_contract_',     expiry: {col: XpryDt,  fmt: nse1980}}
+  - {match: '^NSE_(FO|CD)_spdcontract_',  expiry: {col: XpryDt1, fmt: nse1980}}
+  - {match: '^BSE_\w+_SPDCONTRACT_',      expiry: {col: XpryDt1, fmt: '%d-%b-%Y'}}
+  - {match: '^BSE_\w+_CONTRACT_',         expiry: {col: XpryDt,  fmt: '%d-%b-%Y'}}
+  - {match: '^(EQD|BFX)_CC_CO',           expiry: {col: 6, fmt: '%d-%b-%Y'}, header: false}
+  - {match: '^F_AEL_OPT_CONTRACTS_',      expiry: {col: 2, fmt: '%d-%b-%Y'}, header: false}
+
+  # ---- other files whose first line is data, not a header
+  - {match: '^EQ_MAP_CC_',         header: false}
+  - {match: '\.bcp$',              header: false}
+  - {match: '^series_change\.csv$', min_rows: 0, max_change: 999}
+
+  # ---- binary
+  - {match: '^VAR\d{6}\.xls$',     magic: 'd0cf11e0a1b11ae1', header: false}
